@@ -122,7 +122,7 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: master
+      ref: HEAD
       resolved-ref: a64d76d5bf6c8e74acaa55750c7d89ca0ac873bd
       url: "https://github.com/darwin-morocho/flutter_sound.git"
     source: git

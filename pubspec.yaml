@@ -34,9 +34,7 @@ dependencies:
   path_provider: ^1.6.5
   permission_handler: ^5.0.0+hotfix.3
   flutter_sound:
-    git:
-      url: https://github.com/darwin-morocho/flutter_sound.git
-      ref: master
+    git: https://github.com/darwin-morocho/flutter_sound.git
       
 dev_dependencies:
   flutter_test:
@@ -73,6 +71,7 @@ flutter:
    - assets/chat/trash.svg
    - assets/chat/three_arrow.svg
    - assets/chat/dot.svg
+   - assets/chat/camera.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

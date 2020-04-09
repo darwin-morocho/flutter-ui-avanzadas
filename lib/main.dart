@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(fontFamily: 'sans'),
-      home:  ChatPage(),
+      home: ChatPage(),
       debugShowCheckedModeBanner: false,
       routes: {
         MyLocationPages.splash: (_) => MyLocationSplashPage(),

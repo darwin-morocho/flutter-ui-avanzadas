@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:modernui/examples/chat/models/message.dart';
 import 'package:modernui/examples/chat/widgets/draggable_record.dart';
 import 'package:modernui/utils/responsive.dart';
-import 'package:modernui/widgets/rounded_button.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'chat_icon_button.dart';
@@ -26,13 +25,34 @@ class _ChatInputState extends State<ChatInput> {
   ValueNotifier<bool> _isValidText = ValueNotifier<bool>(false);
   ValueNotifier<Widget> _inputButtons;
 
+  ValueNotifier<Permission> _permission = ValueNotifier<Permission>(null);
+
   ValueNotifier<bool> _recording = ValueNotifier<bool>(false);
+
   TextEditingController _editingController = TextEditingController();
 
   Widget get _buttons {
     return Row(
       children: <Widget>[
-        ChatIconButton(iconPath: 'assets/chat/photo.svg', onPressed: () {}),
+        ChatIconButton(
+            iconPath: 'assets/chat/camera.svg',
+            onPressed: () async {
+              final isOk = await _checkPermission(Permission.camera);
+              if (isOk) {
+              } else {
+                _permission.value = Permission.camera;
+              }
+            }),
+        SizedBox(width: 10),
+        ChatIconButton(
+            iconPath: 'assets/chat/photo.svg',
+            onPressed: () async {
+              final isOk = await _checkPermission(Permission.photos);
+              if (isOk) {
+              } else {
+                _permission.value = Permission.photos;
+              }
+            }),
         SizedBox(width: 10),
         ChatIconButton(iconPath: 'assets/chat/joke.svg', onPressed: () {}),
       ],
@@ -49,6 +69,14 @@ class _ChatInputState extends State<ChatInput> {
   void dispose() {
     _editingController.dispose();
     super.dispose();
+  }
+
+  String get _permissionName {
+    return _permission.value.toString().replaceFirst("Permission.", "");
+  }
+
+  Future<bool> _checkPermission(Permission permission) async {
+    return await permission.isGranted;
   }
 
   void _send(String value, String type) {
@@ -137,12 +165,13 @@ class _ChatInputState extends State<ChatInput> {
                   onRecorded: (path) {
                     print("record $path");
                     _recording.value = false;
-                    widget.onSubmit(Message(
+                    final message = Message(
                         id: DateTime.now().millisecondsSinceEpoch.toString(),
                         userId: widget.userId,
                         value: path,
                         type: MessageType.audio,
-                        sending: true));
+                        sending: true);
+                    widget.onSubmit(message);
                   },
                 ),
               ),
@@ -213,6 +242,32 @@ class _ChatInputState extends State<ChatInput> {
               //END INPUT TEXT
             ],
           ),
+        ),
+        ValueListenableBuilder(
+          valueListenable: _permission,
+          builder: (BuildContext context, Permission permission, Widget child) {
+            final isCameraPermission = _permissionName == 'camera';
+            if (permission == null) return Container();
+            return AnimatedSwitcher(
+              duration: Duration(milliseconds: 400),
+              transitionBuilder: (Widget _, animation) => SizeTransition(
+                sizeFactor: animation,
+                child: _,
+              ),
+              child: permission == null
+                  ? Container()
+                  : ChatMissingPermission(
+                      permission: permission,
+                      title: "JUST ONE STEP",
+                      description: isCameraPermission
+                          ? "To take and send photos we need access to your camera"
+                          : "To send images we need access to your photos",
+                      onGranted: () {
+                        _permission.value = null;
+                      },
+                    ),
+            );
+          },
         ),
       ],
     );

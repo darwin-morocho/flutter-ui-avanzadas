@@ -65,6 +65,7 @@ class _ChatMissingPermissionState extends State<ChatMissingPermission>
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.infinity,
       padding: EdgeInsets.all(15),
       child: Column(
         children: <Widget>[

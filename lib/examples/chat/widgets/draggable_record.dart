@@ -47,20 +47,34 @@ class _DraggableRecordState extends State<DraggableRecord> {
 
   @override
   void dispose() {
-    _recorderSubs?.cancel();
-    _recorder?.release();
     super.dispose();
+    _release();
+    _recorderSubs?.cancel();
+  }
+
+  Future<void> _release() async {
+    try {
+      await _recorder?.release();
+      _recorder = null;
+    } catch (e) {
+      print('Released unsuccessful');
+      print(e);
+    }
   }
 
   _init() async {
-    _recorder = await FlutterSoundRecorder().initialize();
-    final bool isGranted = await Permission.microphone.isGranted;
-    if (isGranted) {
-      _permissionStatus.value = RecordPermissionStatus.granted;
+    try {
+      final bool isGranted = await Permission.microphone.isGranted;
+      if (isGranted) {
+        _permissionStatus.value = RecordPermissionStatus.granted;
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
   _startRecording() async {
+    _recorder = await FlutterSoundRecorder().initialize();
     Directory tempDir = await getTemporaryDirectory();
     File outputFile =
         File('${tempDir.path}/${DateTime.now().microsecondsSinceEpoch}.aac');
@@ -80,10 +94,11 @@ class _DraggableRecordState extends State<DraggableRecord> {
   _stopRecording() async {
     _dragUnderway.value = false;
     await _recorderSubs?.cancel();
-    await _recorder?.stopRecorder();
+    await _release();
+    _recorder = null;
     if (_path != null && _recordingTime.value > 1) {
       widget.onRecorded(_path);
-    } else {
+    } else if (_permissionStatus.value == RecordPermissionStatus.granted) {
       widget.onCancel();
     }
     _recordingTime.value = 0;
