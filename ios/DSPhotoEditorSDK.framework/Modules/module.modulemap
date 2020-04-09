@@ -1,0 +1,6 @@
+framework module DSPhotoEditorSDK {
+  umbrella header "DSPhotoEditorSDK.h"
+
+  export *
+  module * { export * }
+}

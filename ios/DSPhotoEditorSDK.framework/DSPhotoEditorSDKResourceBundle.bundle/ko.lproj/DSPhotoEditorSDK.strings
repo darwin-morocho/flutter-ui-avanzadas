@@ -1,0 +1,57 @@
+
+/* Class = "UILabel"; text = "Warmth"; ObjectID = "0zM-lp-TXT"; */
+"0zM-lp-TXT.text" = "따뜻함";
+
+/* Class = "UILabel"; text = "Contrast"; ObjectID = "1Cf-FW-bN6"; */
+"1Cf-FW-bN6.text" = "대조";
+
+/* Class = "UILabel"; text = "Frame"; ObjectID = "62O-Xs-qb1"; */
+"62O-Xs-qb1.text" = "프레임";
+
+/* Class = "UILabel"; text = "Pixelate"; ObjectID = "DPR-5e-BUL"; */
+"DPR-5e-BUL.text" = "모자이크";
+
+/* Class = "UILabel"; text = "Crop"; ObjectID = "DTZ-RP-xGE"; */
+"DTZ-RP-xGE.text" = "자르기";
+
+/* Class = "UILabel"; text = "Exposure"; ObjectID = "OTb-bV-jZR"; */
+"OTb-bV-jZR.text" = "노출";
+
+/* Class = "UIViewController"; title = "Photo Editor"; ObjectID = "Okc-Jl-tk5"; */
+"Okc-Jl-tk5.title" = "사진 편집기";
+
+/* Class = "UILabel"; text = "Vignette"; ObjectID = "PJg-JC-EPs"; */
+"PJg-JC-EPs.text" = "삽화";
+
+/* Class = "UILabel"; text = "Sharpness"; ObjectID = "QOt-5a-xHV"; */
+"QOt-5a-xHV.text" = "선명도";
+
+/* Class = "UINavigationItem"; title = "Photo Editor"; ObjectID = "Qc6-0o-Zk1"; */
+"Qc6-0o-Zk1.title" = "사진 편집기";
+
+/* Class = "UILabel"; text = "Text"; ObjectID = "T1I-30-9t3"; */
+"T1I-30-9t3.text" = "텍스트";
+
+/* Class = "UILabel"; text = "Saturation"; ObjectID = "Vbq-rJ-Uu9"; */
+"Vbq-rJ-Uu9.text" = "포화";
+
+/* Class = "UILabel"; text = "Circle"; ObjectID = "Zp9-XN-vou"; */
+"Zp9-XN-vou.text" = "원";
+
+/* Class = "UILabel"; text = "Orientation"; ObjectID = "dwv-Gd-lHs"; */
+"dwv-Gd-lHs.text" = "방향";
+
+/* Class = "UILabel"; text = "Sticker"; ObjectID = "e0l-UK-h6t"; */
+"e0l-UK-h6t.text" = "스티커";
+
+/* Class = "UILabel"; text = "Draw"; ObjectID = "gnP-ZC-0wA"; */
+"gnP-ZC-0wA.text" = "그리기";
+
+/* Class = "UILabel"; text = "Photo Editor"; ObjectID = "iOF-uR-Njc"; */
+"iOF-uR-Njc.text" = "사진 편집기";
+
+/* Class = "UILabel"; text = "Round"; ObjectID = "nQL-Pi-PFX"; */
+"nQL-Pi-PFX.text" = "라운드 코너";
+
+/* Class = "UILabel"; text = "Filter"; ObjectID = "wHk-tf-FNA"; */
+"wHk-tf-FNA.text" = "필터";

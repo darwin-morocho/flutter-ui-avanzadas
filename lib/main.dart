@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:modernui/examples/chat/chat_page.dart';
 import 'package:modernui/examples/login/login_page.dart';
 import 'package:modernui/examples/my_location/pages/my_location_missing_permission_page.dart';
@@ -16,6 +17,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(fontFamily: 'sans'),
       home: ChatPage(),
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('es'),
+      ],
       routes: {
         MyLocationPages.splash: (_) => MyLocationSplashPage(),
         MyLocationPages.missingPermission: (_) =>

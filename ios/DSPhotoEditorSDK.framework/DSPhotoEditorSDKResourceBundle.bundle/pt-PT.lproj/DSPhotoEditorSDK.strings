@@ -1,0 +1,57 @@
+
+/* Class = "UILabel"; text = "Warmth"; ObjectID = "0zM-lp-TXT"; */
+"0zM-lp-TXT.text" = "Claridade";
+
+/* Class = "UILabel"; text = "Contrast"; ObjectID = "1Cf-FW-bN6"; */
+"1Cf-FW-bN6.text" = "Contraste";
+
+/* Class = "UILabel"; text = "Frame"; ObjectID = "62O-Xs-qb1"; */
+"62O-Xs-qb1.text" = "Moldura";
+
+/* Class = "UILabel"; text = "Pixelate"; ObjectID = "DPR-5e-BUL"; */
+"DPR-5e-BUL.text" = "Mosaico";
+
+/* Class = "UILabel"; text = "Crop"; ObjectID = "DTZ-RP-xGE"; */
+"DTZ-RP-xGE.text" = "Recortar";
+
+/* Class = "UILabel"; text = "Exposure"; ObjectID = "OTb-bV-jZR"; */
+"OTb-bV-jZR.text" = "Exposição";
+
+/* Class = "UIViewController"; title = "Photo Editor"; ObjectID = "Okc-Jl-tk5"; */
+"Okc-Jl-tk5.title" = "Editor de fotos";
+
+/* Class = "UILabel"; text = "Vignette"; ObjectID = "PJg-JC-EPs"; */
+"PJg-JC-EPs.text" = "Vinheta";
+
+/* Class = "UILabel"; text = "Sharpness"; ObjectID = "QOt-5a-xHV"; */
+"QOt-5a-xHV.text" = "Nitidez";
+
+/* Class = "UINavigationItem"; title = "Photo Editor"; ObjectID = "Qc6-0o-Zk1"; */
+"Qc6-0o-Zk1.title" = "Editor de fotos";
+
+/* Class = "UILabel"; text = "Text"; ObjectID = "T1I-30-9t3"; */
+"T1I-30-9t3.text" = "Texto";
+
+/* Class = "UILabel"; text = "Saturation"; ObjectID = "Vbq-rJ-Uu9"; */
+"Vbq-rJ-Uu9.text" = "Saturação";
+
+/* Class = "UILabel"; text = "Circle"; ObjectID = "Zp9-XN-vou"; */
+"Zp9-XN-vou.text" = "Cículo";
+
+/* Class = "UILabel"; text = "Orientation"; ObjectID = "dwv-Gd-lHs"; */
+"dwv-Gd-lHs.text" = "Orientação";
+
+/* Class = "UILabel"; text = "Sticker"; ObjectID = "e0l-UK-h6t"; */
+"e0l-UK-h6t.text" = "Adesivo";
+
+/* Class = "UILabel"; text = "Draw"; ObjectID = "gnP-ZC-0wA"; */
+"gnP-ZC-0wA.text" = "Desenho";
+
+/* Class = "UILabel"; text = "Photo Editor"; ObjectID = "iOF-uR-Njc"; */
+"iOF-uR-Njc.text" = "Editor de fotos";
+
+/* Class = "UILabel"; text = "Round"; ObjectID = "nQL-Pi-PFX"; */
+"nQL-Pi-PFX.text" = "Arredondada";
+
+/* Class = "UILabel"; text = "Filter"; ObjectID = "wHk-tf-FNA"; */
+"wHk-tf-FNA.text" = "Filtro";

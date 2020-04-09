@@ -1,0 +1,5 @@
+ 
+ Name: DS Photo Editor SDK
+ Version: 2.3
+ Documentation: https://www.dsphotoeditor.com/ios-objective-c
+		https://www.dsphotoeditor.com/ios-swift

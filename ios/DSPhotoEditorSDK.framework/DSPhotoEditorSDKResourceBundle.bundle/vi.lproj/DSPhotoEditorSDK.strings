@@ -1,0 +1,57 @@
+
+/* Class = "UILabel"; text = "Warmth"; ObjectID = "0zM-lp-TXT"; */
+"0zM-lp-TXT.text" = "Độ ấm";
+
+/* Class = "UILabel"; text = "Contrast"; ObjectID = "1Cf-FW-bN6"; */
+"1Cf-FW-bN6.text" = "Độ tương phản";
+
+/* Class = "UILabel"; text = "Frame"; ObjectID = "62O-Xs-qb1"; */
+"62O-Xs-qb1.text" = "Khung";
+
+/* Class = "UILabel"; text = "Pixelate"; ObjectID = "DPR-5e-BUL"; */
+"DPR-5e-BUL.text" = "khảm";
+
+/* Class = "UILabel"; text = "Crop"; ObjectID = "DTZ-RP-xGE"; */
+"DTZ-RP-xGE.text" = "Cắt";
+
+/* Class = "UILabel"; text = "Exposure"; ObjectID = "OTb-bV-jZR"; */
+"OTb-bV-jZR.text" = "Phơi sáng";
+
+/* Class = "UIViewController"; title = "Photo Editor"; ObjectID = "Okc-Jl-tk5"; */
+"Okc-Jl-tk5.title" = "Trình chỉnh sửa hình";
+
+/* Class = "UILabel"; text = "Vignette"; ObjectID = "PJg-JC-EPs"; */
+"PJg-JC-EPs.text" = "Họa tiết";
+
+/* Class = "UILabel"; text = "Sharpness"; ObjectID = "QOt-5a-xHV"; */
+"QOt-5a-xHV.text" = "Độ sắc nét";
+
+/* Class = "UINavigationItem"; title = "Photo Editor"; ObjectID = "Qc6-0o-Zk1"; */
+"Qc6-0o-Zk1.title" = "Trình chỉnh sửa hình";
+
+/* Class = "UILabel"; text = "Text"; ObjectID = "T1I-30-9t3"; */
+"T1I-30-9t3.text" = "Chữ";
+
+/* Class = "UILabel"; text = "Saturation"; ObjectID = "Vbq-rJ-Uu9"; */
+"Vbq-rJ-Uu9.text" = "Độ bão hòa";
+
+/* Class = "UILabel"; text = "Circle"; ObjectID = "Zp9-XN-vou"; */
+"Zp9-XN-vou.text" = "Vòng tròn";
+
+/* Class = "UILabel"; text = "Orientation"; ObjectID = "dwv-Gd-lHs"; */
+"dwv-Gd-lHs.text" = "Hướng";
+
+/* Class = "UILabel"; text = "Sticker"; ObjectID = "e0l-UK-h6t"; */
+"e0l-UK-h6t.text" = "Nhãn dán";
+
+/* Class = "UILabel"; text = "Draw"; ObjectID = "gnP-ZC-0wA"; */
+"gnP-ZC-0wA.text" = "Vẽ tranh";
+
+/* Class = "UILabel"; text = "Photo Editor"; ObjectID = "iOF-uR-Njc"; */
+"iOF-uR-Njc.text" = "Trình chỉnh sửa hình";
+
+/* Class = "UILabel"; text = "Round"; ObjectID = "nQL-Pi-PFX"; */
+"nQL-Pi-PFX.text" = "Góc tròn";
+
+/* Class = "UILabel"; text = "Filter"; ObjectID = "wHk-tf-FNA"; */
+"wHk-tf-FNA.text" = "Bộ lọc";

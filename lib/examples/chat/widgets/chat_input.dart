@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:modernui/examples/chat/models/message.dart';
 import 'package:modernui/examples/chat/widgets/draggable_record.dart';
+import 'package:modernui/native/ds_photo_editor.dart';
 import 'package:modernui/utils/responsive.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -22,13 +23,11 @@ class ChatInput extends StatefulWidget {
 
 class _ChatInputState extends State<ChatInput> {
   String _text = "";
+  DSPhotoEditor _dsPhotoEditor = DSPhotoEditor();
   ValueNotifier<bool> _isValidText = ValueNotifier<bool>(false);
   ValueNotifier<Widget> _inputButtons;
-
   ValueNotifier<Permission> _permission = ValueNotifier<Permission>(null);
-
   ValueNotifier<bool> _recording = ValueNotifier<bool>(false);
-
   TextEditingController _editingController = TextEditingController();
 
   Widget get _buttons {
@@ -39,6 +38,7 @@ class _ChatInputState extends State<ChatInput> {
             onPressed: () async {
               final isOk = await _checkPermission(Permission.camera);
               if (isOk) {
+                _dsPhotoEditor.pick();
               } else {
                 _permission.value = Permission.camera;
               }

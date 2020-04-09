@@ -1,0 +1,57 @@
+
+/* Class = "UILabel"; text = "Warmth"; ObjectID = "0zM-lp-TXT"; */
+"0zM-lp-TXT.text" = "色温";
+
+/* Class = "UILabel"; text = "Contrast"; ObjectID = "1Cf-FW-bN6"; */
+"1Cf-FW-bN6.text" = "對比度";
+
+/* Class = "UILabel"; text = "Frame"; ObjectID = "62O-Xs-qb1"; */
+"62O-Xs-qb1.text" = "邊框";
+
+/* Class = "UILabel"; text = "Pixelate"; ObjectID = "DPR-5e-BUL"; */
+"DPR-5e-BUL.text" = "馬賽克";
+
+/* Class = "UILabel"; text = "Crop"; ObjectID = "DTZ-RP-xGE"; */
+"DTZ-RP-xGE.text" = "裁剪";
+
+/* Class = "UILabel"; text = "Exposure"; ObjectID = "OTb-bV-jZR"; */
+"OTb-bV-jZR.text" = "曝光度";
+
+/* Class = "UIViewController"; title = "Photo Editor"; ObjectID = "Okc-Jl-tk5"; */
+"Okc-Jl-tk5.title" = "照片編輯器";
+
+/* Class = "UILabel"; text = "Vignette"; ObjectID = "PJg-JC-EPs"; */
+"PJg-JC-EPs.text" = "小插圖";
+
+/* Class = "UILabel"; text = "Sharpness"; ObjectID = "QOt-5a-xHV"; */
+"QOt-5a-xHV.text" = "銳度";
+
+/* Class = "UINavigationItem"; title = "Photo Editor"; ObjectID = "Qc6-0o-Zk1"; */
+"Qc6-0o-Zk1.title" = "照片編輯器";
+
+/* Class = "UILabel"; text = "Text"; ObjectID = "T1I-30-9t3"; */
+"T1I-30-9t3.text" = "文字";
+
+/* Class = "UILabel"; text = "Saturation"; ObjectID = "Vbq-rJ-Uu9"; */
+"Vbq-rJ-Uu9.text" = "飽和度";
+
+/* Class = "UILabel"; text = "Circle"; ObjectID = "Zp9-XN-vou"; */
+"Zp9-XN-vou.text" = "圆形裁剪";
+
+/* Class = "UILabel"; text = "Orientation"; ObjectID = "dwv-Gd-lHs"; */
+"dwv-Gd-lHs.text" = "方向";
+
+/* Class = "UILabel"; text = "Sticker"; ObjectID = "e0l-UK-h6t"; */
+"e0l-UK-h6t.text" = "貼紙";
+
+/* Class = "UILabel"; text = "Draw"; ObjectID = "gnP-ZC-0wA"; */
+"gnP-ZC-0wA.text" = "繪畫";
+
+/* Class = "UILabel"; text = "Photo Editor"; ObjectID = "iOF-uR-Njc"; */
+"iOF-uR-Njc.text" = "照片編輯器";
+
+/* Class = "UILabel"; text = "Round"; ObjectID = "nQL-Pi-PFX"; */
+"nQL-Pi-PFX.text" = "圆角";
+
+/* Class = "UILabel"; text = "Filter"; ObjectID = "wHk-tf-FNA"; */
+"wHk-tf-FNA.text" = "濾鏡";
