@@ -32,7 +32,11 @@ dependencies:
   html: ^0.14.0+3
   shimmer: ^1.1.1
   path_provider: ^1.6.5
+  image_picker: ^0.6.4
   permission_handler: ^5.0.0+hotfix.3
+  flutter_image_compress: ^0.6.5+1
+  firebase_core: ^0.4.0+9
+  firebase_storage: ^3.1.5
   flutter_sound:
     git: https://github.com/darwin-morocho/flutter_sound.git
       

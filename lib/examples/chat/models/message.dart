@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:meta/meta.dart' show required;
 import 'package:modernui/examples/chat/models/link_preview.dart';
 
@@ -6,6 +8,7 @@ class Message {
   final Message replyTo;
   final LinkPreview linkPreview;
   final bool sending;
+  final File file;
 
   Message(
       {@required this.id,
@@ -14,17 +17,24 @@ class Message {
       @required this.type,
       this.linkPreview,
       this.sending = false,
+      this.file,
       this.replyTo})
       : assert(id != null && value != null && type != null && userId != null);
 
-  Message copyWith({Message replyTo, LinkPreview linkPreview, bool sending}) {
+  Message copyWith(
+      {String value,
+      Message replyTo,
+      LinkPreview linkPreview,
+      bool sending,
+      File file}) {
     return Message(
         id: this.id,
         userId: this.userId,
-        value: this.value,
+        value: value ?? this.value,
         type: this.type,
         sending: sending ?? this.sending,
         replyTo: replyTo ?? this.replyTo,
+        file: file ?? this.file,
         linkPreview: linkPreview ?? this.linkPreview);
   }
 }

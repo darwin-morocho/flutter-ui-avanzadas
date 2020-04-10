@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modernui/examples/chat/bloc/chat_bloc.dart';
 import 'package:modernui/examples/chat/bloc/chat_events.dart';
 import 'package:modernui/examples/chat/bloc/chat_state.dart';
+import 'package:modernui/examples/chat/widgets/message_view.dart';
 
 class ReplyTo extends StatelessWidget {
   final String myUserId;
@@ -43,7 +44,7 @@ class ReplyTo extends StatelessWidget {
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                     ),
-                    Text(state.replyTo.value)
+                    MessageView(message: state.replyTo, myUserId: null)
                   ],
                 ),
                 Positioned(
@@ -53,7 +54,10 @@ class ReplyTo extends StatelessWidget {
                         padding: EdgeInsets.all(3),
                         minSize: 20,
                         color: Colors.redAccent,
-                        child: Icon(Icons.close,size: 16,),
+                        child: Icon(
+                          Icons.close,
+                          size: 16,
+                        ),
                         onPressed: () => bloc.add(ChatReplyToEvent(null))))
               ],
             ),

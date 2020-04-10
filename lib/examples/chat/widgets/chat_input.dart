@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:modernui/examples/chat/models/message.dart';
 import 'package:modernui/examples/chat/widgets/draggable_record.dart';
+import 'package:modernui/utils/extras.dart';
 import 'package:modernui/utils/responsive.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -24,11 +27,8 @@ class _ChatInputState extends State<ChatInput> {
   String _text = "";
   ValueNotifier<bool> _isValidText = ValueNotifier<bool>(false);
   ValueNotifier<Widget> _inputButtons;
-
   ValueNotifier<Permission> _permission = ValueNotifier<Permission>(null);
-
   ValueNotifier<bool> _recording = ValueNotifier<bool>(false);
-
   TextEditingController _editingController = TextEditingController();
 
   Widget get _buttons {
@@ -39,6 +39,10 @@ class _ChatInputState extends State<ChatInput> {
             onPressed: () async {
               final isOk = await _checkPermission(Permission.camera);
               if (isOk) {
+                final file = await Extras.pickImage(
+                    fromCamera: true, withCompress: true);
+                if (file != null)
+                  _send(file.path, MessageType.image, file: file);
               } else {
                 _permission.value = Permission.camera;
               }
@@ -49,6 +53,11 @@ class _ChatInputState extends State<ChatInput> {
             onPressed: () async {
               final isOk = await _checkPermission(Permission.photos);
               if (isOk) {
+                final file = await Extras.pickImage(
+                    fromCamera: false, withCompress: true);
+
+                if (file != null)
+                  _send(file.path, MessageType.image, file: file);
               } else {
                 _permission.value = Permission.photos;
               }
@@ -79,12 +88,13 @@ class _ChatInputState extends State<ChatInput> {
     return await permission.isGranted;
   }
 
-  void _send(String value, String type) {
+  void _send(String value, String type, {File file}) {
     final message = Message(
         userId: widget.userId,
         sending: true,
         id: DateTime.now().microsecondsSinceEpoch.toString(),
         type: type,
+        file: file,
         value: value);
     widget.onSubmit(message);
   }
@@ -170,6 +180,7 @@ class _ChatInputState extends State<ChatInput> {
                         userId: widget.userId,
                         value: path,
                         type: MessageType.audio,
+                        file: File(path),
                         sending: true);
                     widget.onSubmit(message);
                   },

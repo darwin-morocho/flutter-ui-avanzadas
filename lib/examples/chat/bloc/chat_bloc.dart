@@ -1,12 +1,25 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:modernui/examples/chat/api/witai.dart';
 import 'package:modernui/examples/chat/models/link_preview.dart';
 import 'package:modernui/examples/chat/models/message.dart';
+import 'package:modernui/utils/extras.dart';
 import 'chat_events.dart';
 import 'chat_state.dart';
 
+class MessageTask {
+  final String messageId;
+  final StorageUploadTask uploadTask;
+
+  MessageTask(this.messageId, this.uploadTask);
+}
+
 class ChatBloc extends Bloc<ChatEvents, ChatState> {
   final WitAI _witAI = WitAI();
+  List<MessageTask> _messageTask = [];
 
   @override
   ChatState get initialState => ChatState();
@@ -32,10 +45,24 @@ class ChatBloc extends Bloc<ChatEvents, ChatState> {
     yield this.state.setReplyTo(null, messages: messages);
     print("added message");
 
+    if (message.type != MessageType.text) {
+      // if we are sending a image or audio
+      final uploadtask = Extras.uploadFile(message.file);
+      await uploadtask.onComplete;
+      final String fileUrl = await uploadtask.lastSnapshot.ref.getDownloadURL();
+      message = message.copyWith(value: fileUrl);
+      yield* _sendWitAI(message, completer: event.completer, checkUrl: false);
+      return;
+    }
+
+    yield* _sendWitAI(message, completer: event.completer);
+  }
+
+  Stream<ChatState> _sendWitAI(Message message,
+      {Completer<bool> completer, bool checkUrl = true}) async* {
     // send messato to witAI
-    await Future.delayed(Duration(seconds: 2)); // await for 2 seconds
     final responses = await _witAI.sendMessage(message.value);
-    messages = this.state.messages + responses;
+    final messages = this.state.messages + responses;
     // chage message status to sending false
     final index = messages.indexWhere((item) => item.id == message.id);
     if (index != -1) {
@@ -43,9 +70,13 @@ class ChatBloc extends Bloc<ChatEvents, ChatState> {
       messages[index] = message;
     }
     yield this.state.copyWith(messages: messages); // update
-    event.completer.complete(true);
+    if (completer != null) {
+      completer.complete(true);
+    }
 
-    yield* _checkIfMessageIsUrl(message);
+    if (checkUrl) {
+      yield* _checkIfMessageIsUrl(message);
+    }
   }
 
   Stream<ChatState> _checkIfMessageIsUrl(Message message) async* {

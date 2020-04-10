@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>859753542747-oig1s2q9cmjp3kbghhljmnavv72tfan1.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.859753542747-oig1s2q9cmjp3kbghhljmnavv72tfan1</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBi-BI4n0DNGezLZBO01bYnJCNk-f7QX0M</string>
+	<key>GCM_SENDER_ID</key>
+	<string>859753542747</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>meedu.app.modernui</string>
+	<key>PROJECT_ID</key>
+	<string>flutter-modern-ui</string>
+	<key>STORAGE_BUCKET</key>
+	<string>flutter-modern-ui.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:859753542747:ios:dc75c75af4aeaadbf77b7e</string>
+	<key>DATABASE_URL</key>
+	<string>https://flutter-modern-ui.firebaseio.com</string>
+</dict>
+</plist>
