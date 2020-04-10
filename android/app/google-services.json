@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "859753542747",
+    "firebase_url": "https://flutter-modern-ui.firebaseio.com",
+    "project_id": "flutter-modern-ui",
+    "storage_bucket": "flutter-modern-ui.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859753542747:android:77525c7c0da9e1b8f77b7e",
+        "android_client_info": {
+          "package_name": "meedu.app.modernui"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "859753542747-d20ie94epu9la4ir688v7sabmrn9gl39.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "meedu.app.modernui",
+            "certificate_hash": "3f56cb35e07cf1e22b72d749f1016e6235055aa7"
+          }
+        },
+        {
+          "client_id": "859753542747-jrsjhar7qiiqrkm930uv334eqf953aca.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAR9hFQAYcta_UpnHlHDgMtOxXXtr5q2U4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "859753542747-jrsjhar7qiiqrkm930uv334eqf953aca.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "859753542747-oig1s2q9cmjp3kbghhljmnavv72tfan1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "meedu.app.modernui"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -11,6 +11,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'chat_icon_button.dart';
 import 'chat_missing_permission.dart';
+import 'stickers_picker.dart';
 
 class ChatInput extends StatefulWidget {
   final String userId;
@@ -29,7 +30,9 @@ class _ChatInputState extends State<ChatInput> {
   ValueNotifier<Widget> _inputButtons;
   ValueNotifier<Permission> _permission = ValueNotifier<Permission>(null);
   ValueNotifier<bool> _recording = ValueNotifier<bool>(false);
+  ValueNotifier<bool> _stickersEnabled = ValueNotifier<bool>(false);
   TextEditingController _editingController = TextEditingController();
+  FocusNode _focusNode = FocusNode();
 
   Widget get _buttons {
     return Row(
@@ -37,6 +40,7 @@ class _ChatInputState extends State<ChatInput> {
         ChatIconButton(
             iconPath: 'assets/chat/camera.svg',
             onPressed: () async {
+              _stickersEnabled.value = false;
               final isOk = await _checkPermission(Permission.camera);
               if (isOk) {
                 final file = await Extras.pickImage(
@@ -51,6 +55,7 @@ class _ChatInputState extends State<ChatInput> {
         ChatIconButton(
             iconPath: 'assets/chat/photo.svg',
             onPressed: () async {
+              _stickersEnabled.value = false;
               final isOk = await _checkPermission(Permission.photos);
               if (isOk) {
                 final file = await Extras.pickImage(
@@ -63,7 +68,12 @@ class _ChatInputState extends State<ChatInput> {
               }
             }),
         SizedBox(width: 10),
-        ChatIconButton(iconPath: 'assets/chat/joke.svg', onPressed: () {}),
+        ChatIconButton(
+            iconPath: 'assets/chat/joke.svg',
+            onPressed: () {
+              _stickersEnabled.value = !_stickersEnabled.value;
+             _focusNode.unfocus();
+            }),
       ],
     );
   }
@@ -72,11 +82,17 @@ class _ChatInputState extends State<ChatInput> {
   void initState() {
     super.initState();
     _inputButtons = ValueNotifier<Widget>(_buttons);
+    _focusNode.addListener(() {
+      if (_focusNode.hasFocus && _stickersEnabled.value) {
+        _stickersEnabled.value = false;
+      }
+    });
   }
 
   @override
   void dispose() {
     _editingController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -215,6 +231,7 @@ class _ChatInputState extends State<ChatInput> {
                         controller: _editingController,
                         placeholder: "Your message here ...",
                         maxLines: null,
+                        focusNode: _focusNode,
                         onChanged: (text) {
                           this._text = text;
                           final isValid = _text.trim().length > 0;
@@ -256,7 +273,7 @@ class _ChatInputState extends State<ChatInput> {
         ),
         ValueListenableBuilder(
           valueListenable: _permission,
-          builder: (BuildContext context, Permission permission, Widget child) {
+          builder: (_, Permission permission, Widget child) {
             final isCameraPermission = _permissionName == 'camera';
             if (permission == null) return Container();
             return AnimatedSwitcher(
@@ -280,6 +297,16 @@ class _ChatInputState extends State<ChatInput> {
             );
           },
         ),
+        ValueListenableBuilder(
+            valueListenable: _stickersEnabled,
+            builder: (_, bool enabled, child) {
+              return AnimatedSwitcher(
+                transitionBuilder: (_, animation) =>
+                    SizeTransition(sizeFactor: animation, child: _),
+                duration: Duration(milliseconds: 300),
+                child: enabled ? StickersPicker() : Container(),
+              );
+            })
       ],
     );
   }
