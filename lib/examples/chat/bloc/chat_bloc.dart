@@ -43,10 +43,12 @@ class ChatBloc extends Bloc<ChatEvents, ChatState> {
       await uploadtask.onComplete;
       final String fileUrl = await uploadtask.lastSnapshot.ref.getDownloadURL();
       message = message.copyWith(value: fileUrl);
+      await Future.delayed(Duration(
+          seconds: 3)); // wait for some seconds to simulate the response
       yield* _sendWitAI(message, completer: event.completer, checkUrl: false);
       return;
     }
-
+    await Future.delayed(Duration(seconds: 3));
     yield* _sendWitAI(message,
         completer: event.completer, checkUrl: message.type == MessageType.text);
   }

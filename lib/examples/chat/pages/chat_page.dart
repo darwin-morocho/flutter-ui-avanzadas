@@ -38,7 +38,8 @@ class _ChatPageState extends State<ChatPage> {
     if (_bloc.state.messages.length > 0) {
       _itemScrollController.scrollTo(
           index: _bloc.state.messages.length - 1,
-          duration: Duration(milliseconds: 300));
+          duration: Duration(milliseconds: 500),
+          curve: Curves.linear);
     }
   }
 
@@ -51,7 +52,9 @@ class _ChatPageState extends State<ChatPage> {
       // Scrollable.ensureVisible(key.currentContext,
       //     duration: Duration(milliseconds: 300));
       _itemScrollController.scrollTo(
-          index: index, duration: Duration(milliseconds: 300));
+          index: index,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.ease);
     }
   }
 
@@ -75,28 +78,23 @@ class _ChatPageState extends State<ChatPage> {
                   children: <Widget>[
                     BlocBuilder<ChatBloc, ChatState>(
                       builder: (_, state) {
-                        return GestureDetector(
-                          onTap: (){
-                            print("t"); 
-                          },
-                          child: ScrollablePositionedList.builder(
-                            itemCount: state.messages.length,
-                            itemScrollController: _itemScrollController,
-                            itemBuilder: (_, index) {
-                              final message = state.messages[index];
+                        return ScrollablePositionedList.builder(
+                          itemCount: state.messages.length,
+                          itemScrollController: _itemScrollController,
+                          itemBuilder: (_, index) {
+                            final message = state.messages[index];
 
-                              return MessageItem(
-                                onReply: () =>
-                                    _bloc.add(ChatReplyToEvent(message)),
-                                message: message,
-                                myUserId: _myUserId,
-                                goToRepy: message.replyTo != null
-                                    ? () => _searchMessageAndScroll(
-                                        message.replyTo.id)
-                                    : null,
-                              );
-                            },
-                          ),
+                            return MessageItem(
+                              onReply: () =>
+                                  _bloc.add(ChatReplyToEvent(message)),
+                              message: message,
+                              myUserId: _myUserId,
+                              goToRepy: message.replyTo != null
+                                  ? () => _searchMessageAndScroll(
+                                      message.replyTo.id)
+                                  : null,
+                            );
+                          },
                         );
                       },
                       condition: (prevState, newState) =>
@@ -110,7 +108,7 @@ class _ChatPageState extends State<ChatPage> {
                 ChatInput(
                   key: _chatInputKey,
                   userId: _myUserId,
-                  onStickersOpen: () => _scrollToEnd(),
+                  onStickersOpen: () {},
                   onSubmit: (message) async {
                     final event = ChatSendEvent(message);
                     _bloc.add(event);
