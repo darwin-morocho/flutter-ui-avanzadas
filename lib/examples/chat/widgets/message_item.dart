@@ -41,31 +41,40 @@ class MessageItem extends StatelessWidget {
                 crossAxisAlignment:
                     isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                 children: <Widget>[
+                  // START REPLY TO MESSAGE
                   if (message.replyTo != null)
                     Transform.translate(
-                        offset: Offset(0, 15),
-                        child: Container(
-                          padding: EdgeInsets.only(
-                              bottom: 20, left: 5, right: 5, top: 5),
-                          child: MessageView(
-                            myUserId: myUserId,
-                            message: message.replyTo,
-                          ),
-                          decoration: BoxDecoration(
-                              color: (message.replyTo.userId == myUserId
-                                      ? AppColors.primary
-                                      : AppColors.gray)
-                                  .withOpacity(0.6),
-                              borderRadius: BorderRadius.circular(10)),
-                        )),
+                      offset: Offset(0, 15),
+                      child: Container(
+                        padding: EdgeInsets.only(
+                          bottom: 20,
+                          left: 5,
+                          right: 5,
+                          top: 5,
+                        ),
+                        child: MessageView(
+                          myUserId: myUserId,
+                          message: message.replyTo,
+                        ),
+                        decoration: BoxDecoration(
+                          color: (message.replyTo.userId == myUserId
+                                  ? AppColors.primary
+                                  : AppColors.gray)
+                              .withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  // END REPLY TO MESSAGE
                   Container(
                     decoration: BoxDecoration(
                         color: isMe ? AppColors.primary : AppColors.gray,
                         borderRadius:
                             BorderRadius.circular(isLinkOrImage ? 8 : 30)),
                     padding: EdgeInsets.symmetric(
-                        horizontal: isLinkOrImage ? 5 : 15,
-                        vertical: isLinkOrImage ? 5 : 10),
+                      horizontal: isLinkOrImage ? 5 : 15,
+                      vertical: isLinkOrImage ? 5 : 10,
+                    ),
                     child: Column(
                       crossAxisAlignment: isMe
                           ? CrossAxisAlignment.end

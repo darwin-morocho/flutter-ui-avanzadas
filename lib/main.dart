@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:modernui/examples/chat/chat_page.dart';
+import 'package:modernui/examples/chat/pages/chat_page.dart';
 import 'package:modernui/examples/login/login_page.dart';
 import 'package:modernui/examples/my_location/pages/my_location_missing_permission_page.dart';
 import 'package:modernui/examples/my_location/pages/my_location_pages.dart';

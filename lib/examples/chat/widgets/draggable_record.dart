@@ -118,7 +118,7 @@ class _DraggableRecordState extends State<DraggableRecord> {
             children: <Widget>[
               ValueListenableBuilder(
                 valueListenable: _dragUnderway,
-                builder: (BuildContext context, bool value, Widget child) {
+                builder: (_, bool value, child) {
                   return AnimatedOpacity(
                     opacity: value ? 1 : 0,
                     duration: Duration(milliseconds: 400),
@@ -163,8 +163,7 @@ class _DraggableRecordState extends State<DraggableRecord> {
                               EdgeInsets.only(right: responsive.width * 0.3),
                           child: ValueListenableBuilder(
                             valueListenable: _recordingTime,
-                            builder: (BuildContext context, int value,
-                                Widget child) {
+                            builder: (_, int value, child) {
                               return Text(
                                 Extras.getTime(value),
                                 style: TextStyle(fontSize: 17),
@@ -216,26 +215,32 @@ class _DraggableRecordState extends State<DraggableRecord> {
                         return child;
                       if (status == RecordPermissionStatus.needsRequest) {
                         return DraggableIcon(
-                            iconPath: 'assets/cancel.svg',
-                            color: Colors.redAccent);
+                          iconPath: 'assets/cancel.svg',
+                          color: Colors.redAccent,
+                        );
                       }
 
                       return DraggableIcon(
-                          iconPath: 'assets/chat/microphone.svg',
-                          color: Colors.black);
+                        iconPath: 'assets/chat/microphone.svg',
+                        color: Colors.black,
+                      );
                     },
                     child: Draggable<String>(
-                        axis: Axis.horizontal,
-                        data: "delete",
-                        child: DraggableIcon(
-                            iconPath: 'assets/chat/microphone.svg',
-                            color: Colors.black),
-                        childWhenDragging: DraggableIcon(
-                            iconPath: 'assets/chat/microphone.svg',
-                            color: Colors.black.withOpacity(0.3)),
-                        feedback: DraggableIcon(
-                            iconPath: 'assets/chat/microphone.svg',
-                            color: AppColors.primary)),
+                      axis: Axis.horizontal,
+                      data: "delete",
+                      child: DraggableIcon(
+                        iconPath: 'assets/chat/microphone.svg',
+                        color: Colors.black,
+                      ),
+                      childWhenDragging: DraggableIcon(
+                        iconPath: 'assets/chat/microphone.svg',
+                        color: Colors.black.withOpacity(0.3),
+                      ),
+                      feedback: DraggableIcon(
+                        iconPath: 'assets/chat/microphone.svg',
+                        color: AppColors.primary,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -244,8 +249,7 @@ class _DraggableRecordState extends State<DraggableRecord> {
         ),
         ValueListenableBuilder(
           valueListenable: _permissionStatus,
-          builder: (BuildContext context, RecordPermissionStatus status,
-              Widget child) {
+          builder: (_, RecordPermissionStatus status, child) {
             return AnimatedSwitcher(
               duration: Duration(milliseconds: 300),
               transitionBuilder: (_, animation) {

@@ -5,7 +5,10 @@ import 'package:modernui/examples/chat/models/stickers.dart';
 import 'package:modernui/utils/config.dart';
 
 class StickersPicker extends StatefulWidget {
-  const StickersPicker({Key key}) : super(key: key);
+  final void Function(String) onPicked;
+  const StickersPicker({Key key, @required this.onPicked})
+      : assert(onPicked != null),
+        super(key: key);
 
   @override
   _StickersPickerState createState() => _StickersPickerState();
@@ -36,40 +39,53 @@ class _StickersPickerState extends State<StickersPicker>
         child: Column(
           children: <Widget>[
             Expanded(
-                child: TabBarView(
-                    controller: _controller,
-                    children: List.generate(Stickers.all.length, (index) {
-                      final Stickers stickers = Stickers.all[index];
-                      return GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            childAspectRatio: 1,
-                            mainAxisSpacing: 10,
-                            crossAxisSpacing: 10),
-                        itemBuilder: (_, index) {
-                          final item = stickers.items[index];
-                          return CachedNetworkImage(
+              child: TabBarView(
+                controller: _controller,
+                children: List.generate(
+                  Stickers.all.length,
+                  (index) {
+                    final Stickers stickers = Stickers.all[index];
+                    return GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        childAspectRatio: 1,
+                        mainAxisSpacing: 10,
+                        crossAxisSpacing: 10,
+                      ),
+                      itemBuilder: (_, index) {
+                        final item = stickers.items[index];
+                        return CupertinoButton(
+                          padding: EdgeInsets.all(10),
+                          child: CachedNetworkImage(
                             imageUrl: item,
                             fit: BoxFit.cover,
                             height: double.infinity,
                             placeholder: (_, __) => Center(
                               child: CupertinoActivityIndicator(radius: 15),
                             ),
-                          );
-                        },
-                        itemCount: stickers.items.length,
-                      );
-                    }))),
+                          ),
+                          onPressed: () => widget.onPicked(item),
+                        );
+                      },
+                      itemCount: stickers.items.length,
+                    );
+                  },
+                ),
+              ),
+            ),
             TabBar(
               indicator: CustomTabIndicator(),
               labelColor: Colors.white,
               unselectedLabelColor: Colors.black54,
-              tabs: List.generate(Stickers.all.length, (index) {
-                final Stickers stickers = Stickers.all[index];
-                return Tab(
-                  text: stickers.name,
-                );
-              }),
+              tabs: List.generate(
+                Stickers.all.length,
+                (index) {
+                  final Stickers stickers = Stickers.all[index];
+                  return Tab(
+                    text: stickers.name,
+                  );
+                },
+              ),
               indicatorWeight: 4,
               controller: _controller,
             )

@@ -16,15 +16,20 @@ import 'stickers_picker.dart';
 class ChatInput extends StatefulWidget {
   final String userId;
   final void Function(Message) onSubmit;
+  final VoidCallback onStickersOpen;
 
-  const ChatInput({Key key, @required this.onSubmit, @required this.userId})
-      : assert(onSubmit != null && userId != null),
+  const ChatInput(
+      {Key key,
+      @required this.onSubmit,
+      @required this.userId,
+      @required this.onStickersOpen})
+      : assert(onSubmit != null && userId != null && onStickersOpen != null),
         super(key: key);
   @override
-  _ChatInputState createState() => _ChatInputState();
+  ChatInputState createState() => ChatInputState();
 }
 
-class _ChatInputState extends State<ChatInput> {
+class ChatInputState extends State<ChatInput> {
   String _text = "";
   ValueNotifier<bool> _isValidText = ValueNotifier<bool>(false);
   ValueNotifier<Widget> _inputButtons;
@@ -38,44 +43,52 @@ class _ChatInputState extends State<ChatInput> {
     return Row(
       children: <Widget>[
         ChatIconButton(
-            iconPath: 'assets/chat/camera.svg',
-            onPressed: () async {
-              _stickersEnabled.value = false;
-              final isOk = await _checkPermission(Permission.camera);
-              if (isOk) {
-                final file = await Extras.pickImage(
-                    fromCamera: true, withCompress: true);
-                if (file != null)
-                  _send(file.path, MessageType.image, file: file);
-              } else {
-                _permission.value = Permission.camera;
-              }
-            }),
+          iconPath: 'assets/chat/camera.svg',
+          onPressed: () async {
+            dismissStickers();
+            final isOk = await _checkPermission(Permission.camera);
+            if (isOk) {
+              final file =
+                  await Extras.pickImage(fromCamera: true, withCompress: true);
+              if (file != null) _send(file.path, MessageType.image, file: file);
+            } else {
+              _permission.value = Permission.camera;
+            }
+          },
+        ),
         SizedBox(width: 10),
         ChatIconButton(
-            iconPath: 'assets/chat/photo.svg',
-            onPressed: () async {
-              _stickersEnabled.value = false;
-              final isOk = await _checkPermission(Permission.photos);
-              if (isOk) {
-                final file = await Extras.pickImage(
-                    fromCamera: false, withCompress: true);
+          iconPath: 'assets/chat/photo.svg',
+          onPressed: () async {
+            dismissStickers();
+            final isOk = await _checkPermission(Permission.photos);
+            if (isOk) {
+              final file =
+                  await Extras.pickImage(fromCamera: false, withCompress: true);
 
-                if (file != null)
-                  _send(file.path, MessageType.image, file: file);
-              } else {
-                _permission.value = Permission.photos;
-              }
-            }),
+              if (file != null) _send(file.path, MessageType.image, file: file);
+            } else {
+              _permission.value = Permission.photos;
+            }
+          },
+        ),
         SizedBox(width: 10),
         ChatIconButton(
-            iconPath: 'assets/chat/joke.svg',
-            onPressed: () {
-              _stickersEnabled.value = !_stickersEnabled.value;
-             _focusNode.unfocus();
-            }),
+          iconPath: 'assets/chat/joke.svg',
+          onPressed: () {
+            _stickersEnabled.value = !_stickersEnabled.value;
+            if (_stickersEnabled.value) {
+              widget.onStickersOpen();
+            }
+            _focusNode.unfocus();
+          },
+        ),
       ],
     );
+  }
+
+  void dismissStickers() {
+    _stickersEnabled.value = false;
   }
 
   @override
@@ -84,7 +97,7 @@ class _ChatInputState extends State<ChatInput> {
     _inputButtons = ValueNotifier<Widget>(_buttons);
     _focusNode.addListener(() {
       if (_focusNode.hasFocus && _stickersEnabled.value) {
-        _stickersEnabled.value = false;
+        dismissStickers();
       }
     });
   }
@@ -137,47 +150,48 @@ class _ChatInputState extends State<ChatInput> {
                 right: 0,
                 top: 5,
                 child: CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    minSize: 25,
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        color: Color(0xff2979FF),
-                      ),
-                      padding: EdgeInsets.symmetric(vertical: 8),
-                      child: SvgPicture.asset(
-                        'assets/chat/send.svg',
-                        color: Colors.white,
-                      ),
+                  padding: EdgeInsets.zero,
+                  minSize: 25,
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: Color(0xff2979FF),
                     ),
-                    onPressed: () {
-                      _send(_text, MessageType.text);
-                      _text = "";
-                      _editingController.text = "";
-                      _isValidText.value = false;
-                      _inputButtons.value = _buttons;
-                    }),
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: SvgPicture.asset(
+                      'assets/chat/send.svg',
+                      color: Colors.white,
+                    ),
+                  ),
+                  onPressed: () {
+                    _send(_text, MessageType.text);
+                    _text = "";
+                    _editingController.text = "";
+                    _isValidText.value = false;
+                    _inputButtons.value = _buttons;
+                  },
+                ),
               ),
               // SEND SEND BUTTON
 
               // START DRAGGABLE RECORD
               ValueListenableBuilder(
                 valueListenable: _isValidText,
-                builder:
-                    (BuildContext context, bool isValidText, Widget child) {
+                builder: (_, bool isValidText, child) {
                   return AnimatedSwitcher(
-                      child: isValidText ? Container() : child,
-                      transitionBuilder: (child, animation) {
-                        return SizeTransition(
-                          axis: Axis.horizontal,
-                          sizeFactor: animation,
-                          axisAlignment: 1,
-                          child: child,
-                        );
-                      },
-                      duration: Duration(milliseconds: 600));
+                    child: isValidText ? Container() : child,
+                    transitionBuilder: (child, animation) {
+                      return SizeTransition(
+                        axis: Axis.horizontal,
+                        sizeFactor: animation,
+                        axisAlignment: 1,
+                        child: child,
+                      );
+                    },
+                    duration: Duration(milliseconds: 600),
+                  );
                 },
                 child: DraggableRecord(
                   onCancel: () {
@@ -192,12 +206,13 @@ class _ChatInputState extends State<ChatInput> {
                     print("record $path");
                     _recording.value = false;
                     final message = Message(
-                        id: DateTime.now().millisecondsSinceEpoch.toString(),
-                        userId: widget.userId,
-                        value: path,
-                        type: MessageType.audio,
-                        file: File(path),
-                        sending: true);
+                      id: DateTime.now().millisecondsSinceEpoch.toString(),
+                      userId: widget.userId,
+                      value: path,
+                      type: MessageType.audio,
+                      file: File(path),
+                      sending: true,
+                    );
                     widget.onSubmit(message);
                   },
                 ),
@@ -207,16 +222,16 @@ class _ChatInputState extends State<ChatInput> {
               //START INPUT TEXT
               ValueListenableBuilder(
                 valueListenable: _recording,
-                builder:
-                    (BuildContext context, bool isRecording, Widget child) {
+                builder: (_, bool isRecording, child) {
                   return AnimatedSwitcher(
-                      child: !isRecording
-                          ? Align(
-                              alignment: Alignment.centerLeft,
-                              child: child,
-                            )
-                          : Container(),
-                      duration: Duration(milliseconds: 300));
+                    child: !isRecording
+                        ? Align(
+                            alignment: Alignment.centerLeft,
+                            child: child,
+                          )
+                        : Container(),
+                    duration: Duration(milliseconds: 300),
+                  );
                 },
                 child: Container(
                   width: inputWidth,
@@ -227,28 +242,28 @@ class _ChatInputState extends State<ChatInput> {
                   child: Row(
                     children: <Widget>[
                       Expanded(
-                          child: CupertinoTextField(
-                        controller: _editingController,
-                        placeholder: "Your message here ...",
-                        maxLines: null,
-                        focusNode: _focusNode,
-                        onChanged: (text) {
-                          this._text = text;
-                          final isValid = _text.trim().length > 0;
-                          if (_isValidText.value != isValid) {
-                            _isValidText.value = isValid;
-                            _inputButtons.value =
-                                isValid ? Container() : _buttons;
-                          }
-                        },
-                        decoration: BoxDecoration(color: Colors.transparent),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      )),
+                        child: CupertinoTextField(
+                          controller: _editingController,
+                          placeholder: "Your message here ...",
+                          maxLines: null,
+                          focusNode: _focusNode,
+                          onChanged: (text) {
+                            this._text = text;
+                            final isValid = _text.trim().length > 0;
+                            if (_isValidText.value != isValid) {
+                              _isValidText.value = isValid;
+                              _inputButtons.value =
+                                  isValid ? Container() : _buttons;
+                            }
+                          },
+                          decoration: BoxDecoration(color: Colors.transparent),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
+                        ),
+                      ),
                       ValueListenableBuilder(
                         valueListenable: _inputButtons,
-                        builder:
-                            (BuildContext context, Widget value, Widget child) {
+                        builder: (_, Widget value, child) {
                           return AnimatedSwitcher(
                             duration: Duration(milliseconds: 300),
                             transitionBuilder: (child, animation) {
@@ -273,7 +288,7 @@ class _ChatInputState extends State<ChatInput> {
         ),
         ValueListenableBuilder(
           valueListenable: _permission,
-          builder: (_, Permission permission, Widget child) {
+          builder: (_, Permission permission, child) {
             final isCameraPermission = _permissionName == 'camera';
             if (permission == null) return Container();
             return AnimatedSwitcher(
@@ -304,7 +319,12 @@ class _ChatInputState extends State<ChatInput> {
                 transitionBuilder: (_, animation) =>
                     SizeTransition(sizeFactor: animation, child: _),
                 duration: Duration(milliseconds: 300),
-                child: enabled ? StickersPicker() : Container(),
+                child: enabled
+                    ? StickersPicker(
+                        onPicked: (imageurl) =>
+                            _send(imageurl, MessageType.image),
+                      )
+                    : Container(),
               );
             })
       ],

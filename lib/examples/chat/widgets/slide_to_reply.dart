@@ -19,8 +19,7 @@ class SlideToReply extends StatefulWidget {
   _SlideToReplyState createState() => _SlideToReplyState();
 }
 
-class _SlideToReplyState extends State<SlideToReply>
-    with AutomaticKeepAliveClientMixin {
+class _SlideToReplyState extends State<SlideToReply> {
   final double _threshold = 40;
   ValueNotifier<double> _move = ValueNotifier<double>(0);
   ValueNotifier<bool> _show = ValueNotifier<bool>(false);
@@ -79,7 +78,7 @@ class _SlideToReplyState extends State<SlideToReply>
         children: <Widget>[
           ValueListenableBuilder(
             valueListenable: _show,
-            builder: (BuildContext context, bool value, Widget child) {
+            builder: (_, bool value, child) {
               return Positioned(
                   left: _fromLeft ? 20 : null,
                   right: _fromLeft ? null : 20,
@@ -95,7 +94,7 @@ class _SlideToReplyState extends State<SlideToReply>
           ),
           ValueListenableBuilder(
             valueListenable: _move,
-            builder: (BuildContext context, double value, Widget child) {
+            builder: (_, double value, child) {
               return Transform.translate(
                 offset: Offset(value, 0),
                 child: child,
@@ -107,7 +106,4 @@ class _SlideToReplyState extends State<SlideToReply>
       ),
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

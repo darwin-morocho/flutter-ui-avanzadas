@@ -8,8 +8,7 @@ import 'package:modernui/examples/chat/bloc/chat_events.dart';
 import 'package:modernui/examples/chat/bloc/chat_state.dart';
 import 'package:modernui/examples/chat/widgets/message_item.dart';
 import 'package:modernui/examples/chat/widgets/reply_to.dart';
-
-import 'widgets/chat_input.dart';
+import '../widgets/chat_input.dart';
 
 class ChatPage extends StatefulWidget {
   @override
@@ -18,6 +17,7 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final ChatBloc _bloc = ChatBloc();
+  GlobalKey<ChatInputState> _chatInputKey = GlobalKey<ChatInputState>();
   final _myUserId = "Darwin";
   final ScrollController _scrollController = ScrollController();
 
@@ -30,8 +30,8 @@ class _ChatPageState extends State<ChatPage> {
 
   _scrollToEnd() {
     Timer(Duration(milliseconds: 500), () {
-      if (_scrollController.offset >= _scrollController.position.maxScrollExtent)
-        return;
+      if (_scrollController.offset >=
+          _scrollController.position.maxScrollExtent) return;
       if (this.mounted) {
         _scrollController.animateTo(
             _scrollController.position.maxScrollExtent + 50,
@@ -47,7 +47,10 @@ class _ChatPageState extends State<ChatPage> {
       value: _bloc,
       child: Scaffold(
         body: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
+          onTap: () {
+            FocusScope.of(context).unfocus();
+            _chatInputKey.currentState?.dismissStickers();
+          },
           child: Container(
             color: Colors.white,
             child: SafeArea(
@@ -80,7 +83,9 @@ class _ChatPageState extends State<ChatPage> {
                   ],
                 )),
                 ChatInput(
+                  key: _chatInputKey,
                   userId: _myUserId,
+                  onStickersOpen: () => _scrollToEnd(),
                   onSubmit: (message) async {
                     final event = ChatSendEvent(message);
                     _bloc.add(event);

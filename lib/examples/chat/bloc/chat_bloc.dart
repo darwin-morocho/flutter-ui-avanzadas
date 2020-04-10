@@ -10,16 +10,8 @@ import 'package:modernui/utils/extras.dart';
 import 'chat_events.dart';
 import 'chat_state.dart';
 
-class MessageTask {
-  final String messageId;
-  final StorageUploadTask uploadTask;
-
-  MessageTask(this.messageId, this.uploadTask);
-}
-
 class ChatBloc extends Bloc<ChatEvents, ChatState> {
   final WitAI _witAI = WitAI();
-  List<MessageTask> _messageTask = [];
 
   @override
   ChatState get initialState => ChatState();
@@ -45,7 +37,7 @@ class ChatBloc extends Bloc<ChatEvents, ChatState> {
     yield this.state.setReplyTo(null, messages: messages);
     print("added message");
 
-    if (message.type != MessageType.text) {
+    if (message.type != MessageType.text && message.file != null) {
       // if we are sending a image or audio
       final uploadtask = Extras.uploadFile(message.file);
       await uploadtask.onComplete;
@@ -55,7 +47,8 @@ class ChatBloc extends Bloc<ChatEvents, ChatState> {
       return;
     }
 
-    yield* _sendWitAI(message, completer: event.completer);
+    yield* _sendWitAI(message,
+        completer: event.completer, checkUrl: message.type == MessageType.text);
   }
 
   Stream<ChatState> _sendWitAI(Message message,

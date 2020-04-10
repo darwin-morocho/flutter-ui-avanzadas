@@ -24,41 +24,50 @@ class ReplyTo extends StatelessWidget {
           bottom: 0,
           child: Container(
             decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                    left: BorderSide(
-                        color: myUserId == state.replyTo.userId
-                            ? Color(0xff2979FF)
-                            : Color(0xffdddddd),
-                        width: 5)),
-                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)]),
+              color: Colors.white,
+              border: Border(
+                left: BorderSide(
+                    color: myUserId == state.replyTo.userId
+                        ? Color(0xff2979FF)
+                        : Color(0xffdddddd),
+                    width: 5),
+              ),
+              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
+            ),
             padding: EdgeInsets.all(10),
-            child: Stack(
+            child: Row(
               children: <Widget>[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      "Respondiendo a:",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                    ),
-                    MessageView(message: state.replyTo, myUserId: null)
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        "Respondiendo a:",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 13),
+                      ),
+                      SizedBox(height: 3),
+                      MessageView(
+                        message: state.replyTo,
+                        myUserId: null,
+                        isInsideReplyTo: true,
+                      )
+                    ],
+                  ),
                 ),
-                Positioned(
-                    right: 0,
-                    top: 0,
-                    child: CupertinoButton(
-                        padding: EdgeInsets.all(3),
-                        minSize: 20,
-                        color: Colors.redAccent,
-                        child: Icon(
-                          Icons.close,
-                          size: 16,
-                        ),
-                        onPressed: () => bloc.add(ChatReplyToEvent(null))))
+                CupertinoButton(
+                  padding: EdgeInsets.all(0),
+                  minSize: 20,
+                  child: Icon(
+                    Icons.close,
+                    size: 30,
+                    color: Colors.red,
+                  ),
+                  onPressed: () => bloc.add(
+                    ChatReplyToEvent(null),
+                  ),
+                )
               ],
             ),
           ),
