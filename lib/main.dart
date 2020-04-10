@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(fontFamily: 'sans'),
+      theme: ThemeData(fontFamily: 'sans',platform: TargetPlatform.iOS),
       home: ChatPage(),
       debugShowCheckedModeBanner: false,
       routes: {

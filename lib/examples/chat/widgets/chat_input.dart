@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:modernui/examples/chat/models/message.dart';
 import 'package:modernui/examples/chat/widgets/draggable_record.dart';
@@ -31,8 +32,8 @@ class ChatInput extends StatefulWidget {
 
 class ChatInputState extends State<ChatInput> {
   String _text = "";
-  ValueNotifier<bool> _isValidText = ValueNotifier<bool>(false);
-  ValueNotifier<Widget> _inputButtons;
+  ValueNotifier<bool> _inputHasFocus = ValueNotifier<bool>(false);
+
   ValueNotifier<Permission> _permission = ValueNotifier<Permission>(null);
   ValueNotifier<bool> _recording = ValueNotifier<bool>(false);
   ValueNotifier<bool> _stickersEnabled = ValueNotifier<bool>(false);
@@ -91,11 +92,23 @@ class ChatInputState extends State<ChatInput> {
     _stickersEnabled.value = false;
   }
 
+  void _removeInputFocus() {
+    _focusNode.unfocus();
+  }
+
   @override
   void initState() {
     super.initState();
-    _inputButtons = ValueNotifier<Widget>(_buttons);
+    KeyboardVisibilityNotification().addNewListener(
+      onChange: (bool visible) {
+        if (!visible) {
+          _removeInputFocus();
+        }
+      },
+    );
+
     _focusNode.addListener(() {
+      _inputHasFocus.value = _focusNode.hasFocus;
       if (_focusNode.hasFocus && _stickersEnabled.value) {
         dismissStickers();
       }
@@ -138,7 +151,7 @@ class ChatInputState extends State<ChatInput> {
         Container(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Stack(
-            alignment: Alignment.topLeft,
+            alignment: Alignment.centerLeft,
             children: <Widget>[
               SizedBox(
                   height: 50,
@@ -148,29 +161,27 @@ class ChatInputState extends State<ChatInput> {
               // START SEND BUTTON
               Positioned(
                 right: 0,
-                top: 5,
                 child: CupertinoButton(
                   padding: EdgeInsets.zero,
                   minSize: 25,
                   child: Container(
-                    width: 40,
-                    height: 40,
+                    width: 45,
+                    height: 45,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
+                      shape: BoxShape.circle,
                       color: Color(0xff2979FF),
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 8),
+                    padding: EdgeInsets.symmetric(vertical: 12),
                     child: SvgPicture.asset(
                       'assets/chat/send.svg',
                       color: Colors.white,
                     ),
                   ),
                   onPressed: () {
+                    if (_text.trim().length == 0) return; // if text is empty
                     _send(_text, MessageType.text);
                     _text = "";
                     _editingController.text = "";
-                    _isValidText.value = false;
-                    _inputButtons.value = _buttons;
                   },
                 ),
               ),
@@ -178,19 +189,17 @@ class ChatInputState extends State<ChatInput> {
 
               // START DRAGGABLE RECORD
               ValueListenableBuilder(
-                valueListenable: _isValidText,
+                valueListenable: _inputHasFocus,
                 builder: (_, bool isValidText, child) {
                   return AnimatedSwitcher(
                     child: isValidText ? Container() : child,
                     transitionBuilder: (child, animation) {
-                      return SizeTransition(
-                        axis: Axis.horizontal,
-                        sizeFactor: animation,
-                        axisAlignment: 1,
+                      return ScaleTransition(
+                        scale: animation,
                         child: child,
                       );
                     },
-                    duration: Duration(milliseconds: 600),
+                    duration: Duration(milliseconds: 300),
                   );
                 },
                 child: DraggableRecord(
@@ -205,15 +214,11 @@ class ChatInputState extends State<ChatInput> {
                   onRecorded: (path) {
                     print("record $path");
                     _recording.value = false;
-                    final message = Message(
-                      id: DateTime.now().millisecondsSinceEpoch.toString(),
-                      userId: widget.userId,
-                      value: path,
-                      type: MessageType.audio,
+                    _send(
+                      path,
+                      MessageType.audio,
                       file: File(path),
-                      sending: true,
                     );
-                    widget.onSubmit(message);
                   },
                 ),
               ),
@@ -223,13 +228,9 @@ class ChatInputState extends State<ChatInput> {
               ValueListenableBuilder(
                 valueListenable: _recording,
                 builder: (_, bool isRecording, child) {
-                  return AnimatedSwitcher(
-                    child: !isRecording
-                        ? Align(
-                            alignment: Alignment.centerLeft,
-                            child: child,
-                          )
-                        : Container(),
+                  return AnimatedPositioned(
+                    left: isRecording ? -inputWidth : 0,
+                    child: child,
                     duration: Duration(milliseconds: 300),
                   );
                 },
@@ -249,12 +250,6 @@ class ChatInputState extends State<ChatInput> {
                           focusNode: _focusNode,
                           onChanged: (text) {
                             this._text = text;
-                            final isValid = _text.trim().length > 0;
-                            if (_isValidText.value != isValid) {
-                              _isValidText.value = isValid;
-                              _inputButtons.value =
-                                  isValid ? Container() : _buttons;
-                            }
                           },
                           decoration: BoxDecoration(color: Colors.transparent),
                           padding: EdgeInsets.symmetric(
@@ -262,8 +257,8 @@ class ChatInputState extends State<ChatInput> {
                         ),
                       ),
                       ValueListenableBuilder(
-                        valueListenable: _inputButtons,
-                        builder: (_, Widget value, child) {
+                        valueListenable: _inputHasFocus,
+                        builder: (_, bool hasFocus, child) {
                           return AnimatedSwitcher(
                             duration: Duration(milliseconds: 300),
                             transitionBuilder: (child, animation) {
@@ -274,7 +269,12 @@ class ChatInputState extends State<ChatInput> {
                                 child: child,
                               );
                             },
-                            child: _inputButtons.value,
+                            child: hasFocus
+                                ? ChatIconButton(
+                                    iconPath: 'assets/down-arrow.svg',
+                                    onPressed: _removeInputFocus,
+                                  )
+                                : _buttons,
                           );
                         },
                       ),
@@ -282,7 +282,7 @@ class ChatInputState extends State<ChatInput> {
                   ),
                 ),
               ),
-              //END INPUT TEXT
+              // END INPUT TEXT
             ],
           ),
         ),

@@ -8,6 +8,7 @@ import 'package:modernui/examples/chat/bloc/chat_events.dart';
 import 'package:modernui/examples/chat/bloc/chat_state.dart';
 import 'package:modernui/examples/chat/widgets/message_item.dart';
 import 'package:modernui/examples/chat/widgets/reply_to.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../widgets/chat_input.dart';
 
 class ChatPage extends StatefulWidget {
@@ -19,26 +20,39 @@ class _ChatPageState extends State<ChatPage> {
   final ChatBloc _bloc = ChatBloc();
   GlobalKey<ChatInputState> _chatInputKey = GlobalKey<ChatInputState>();
   final _myUserId = "Darwin";
-  final ScrollController _scrollController = ScrollController();
+
+  final ItemScrollController _itemScrollController = ItemScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void dispose() {
     _bloc.close();
-    _scrollController.dispose();
     super.dispose();
   }
 
   _scrollToEnd() {
-    Timer(Duration(milliseconds: 500), () {
-      if (_scrollController.offset >=
-          _scrollController.position.maxScrollExtent) return;
-      if (this.mounted) {
-        _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent + 50,
-            duration: Duration(seconds: 1),
-            curve: Curves.linear);
-      }
-    });
+    if (_bloc.state.messages.length > 0) {
+      _itemScrollController.scrollTo(
+          index: _bloc.state.messages.length - 1,
+          duration: Duration(milliseconds: 300));
+    }
+  }
+
+  _searchMessageAndScroll(String messageId) {
+    final int index =
+        _bloc.state.messages.indexWhere((item) => item.id == messageId);
+
+    if (index != -1) {
+      // print("object key ${key != null} ");
+      // Scrollable.ensureVisible(key.currentContext,
+      //     duration: Duration(milliseconds: 300));
+      _itemScrollController.scrollTo(
+          index: index, duration: Duration(milliseconds: 300));
+    }
   }
 
   @override
@@ -61,17 +75,28 @@ class _ChatPageState extends State<ChatPage> {
                   children: <Widget>[
                     BlocBuilder<ChatBloc, ChatState>(
                       builder: (_, state) {
-                        return ListView.builder(
-                          controller: _scrollController,
-                          itemBuilder: (_, index) {
-                            final message = state.messages[index];
-                            return MessageItem(
+                        return GestureDetector(
+                          onTap: (){
+                            print("t"); 
+                          },
+                          child: ScrollablePositionedList.builder(
+                            itemCount: state.messages.length,
+                            itemScrollController: _itemScrollController,
+                            itemBuilder: (_, index) {
+                              final message = state.messages[index];
+
+                              return MessageItem(
                                 onReply: () =>
                                     _bloc.add(ChatReplyToEvent(message)),
                                 message: message,
-                                myUserId: _myUserId);
-                          },
-                          itemCount: state.messages.length,
+                                myUserId: _myUserId,
+                                goToRepy: message.replyTo != null
+                                    ? () => _searchMessageAndScroll(
+                                        message.replyTo.id)
+                                    : null,
+                              );
+                            },
+                          ),
                         );
                       },
                       condition: (prevState, newState) =>

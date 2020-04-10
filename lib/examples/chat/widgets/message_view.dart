@@ -35,7 +35,7 @@ class MessageView extends StatelessWidget {
     } else if (message.type == MessageType.audio) {
       return AudioPlayer(fileUri: message.value);
     } else if (message.type == MessageType.image) {
-      final heroTag = message.id;
+      final heroTag = "${DateTime.now().millisecondsSinceEpoch}${message.id}";
       return ClipRRect(
         borderRadius: BorderRadius.circular(5),
         child: CupertinoButton(

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart' show required;
 import 'package:modernui/examples/chat/models/link_preview.dart';
 

@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modernui/examples/chat/models/message.dart';
 import 'package:modernui/utils/config.dart';
-import 'audio_player.dart';
 import 'link_preview_viewer.dart';
 import 'message_view.dart';
 import 'slide_to_reply.dart';
@@ -13,9 +10,14 @@ class MessageItem extends StatelessWidget {
   final Message message;
   final String myUserId;
   final VoidCallback onReply;
-  const MessageItem(
-      {Key key, @required this.message, @required this.myUserId, this.onReply})
-      : assert(message != null && myUserId != null),
+  final VoidCallback goToRepy;
+  const MessageItem({
+    Key key,
+    @required this.message,
+    @required this.myUserId,
+    this.onReply,
+    @required this.goToRepy,
+  })  : assert(message != null && myUserId != null),
         super(key: key);
 
   @override
@@ -31,6 +33,7 @@ class MessageItem extends StatelessWidget {
       from: isMe ? SlideToReplyDirection.right : SlideToReplyDirection.left,
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        width: double.infinity,
         child: Wrap(
           alignment: isMe ? WrapAlignment.end : WrapAlignment.start,
           crossAxisAlignment: WrapCrossAlignment.center,
@@ -52,9 +55,16 @@ class MessageItem extends StatelessWidget {
                           right: 5,
                           top: 5,
                         ),
-                        child: MessageView(
-                          myUserId: myUserId,
-                          message: message.replyTo,
+                        child: CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          child: AbsorbPointer(
+                            absorbing: true,
+                            child: MessageView(
+                              myUserId: myUserId,
+                              message: message.replyTo,
+                            ),
+                          ),
+                          onPressed: goToRepy,
                         ),
                         decoration: BoxDecoration(
                           color: (message.replyTo.userId == myUserId
@@ -90,8 +100,9 @@ class MessageItem extends StatelessWidget {
             ),
             if (message.sending)
               Padding(
-                  padding: EdgeInsets.only(left: 5),
-                  child: CupertinoActivityIndicator())
+                padding: EdgeInsets.only(left: 5),
+                child: CupertinoActivityIndicator(),
+              )
           ],
         ),
       ),
