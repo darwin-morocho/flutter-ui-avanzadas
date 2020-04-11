@@ -5,15 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inner_drawer/inner_drawer.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:modernui/examples/chat/bloc/chat_bloc.dart';
 import 'package:modernui/examples/chat/bloc/chat_events.dart';
 import 'package:modernui/examples/chat/bloc/chat_state.dart';
 import 'package:modernui/examples/chat/widgets/chat_app_bar.dart';
 import 'package:modernui/examples/chat/widgets/message_item.dart';
 import 'package:modernui/examples/chat/widgets/reply_to.dart';
-import 'package:modernui/utils/config.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 import '../widgets/chat_input.dart';
 
 class ChatPage extends StatefulWidget {
@@ -26,8 +24,9 @@ class _ChatPageState extends State<ChatPage> {
   GlobalKey<InnerDrawerState> _drawerKey = GlobalKey<InnerDrawerState>();
   GlobalKey<ChatInputState> _chatInputKey = GlobalKey<ChatInputState>();
   final _myUserId = "Darwin";
+  Timer _timer;
 
-  final ItemScrollController _itemScrollController = ItemScrollController();
+  final AutoScrollController _scrollController = AutoScrollController();
 
   @override
   void initState() {
@@ -38,15 +37,18 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void dispose() {
     _bloc.close();
+    _scrollController.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
   _scrollToEnd() {
     if (_bloc.state.messages.length > 0) {
-      _itemScrollController.scrollTo(
-          index: _bloc.state.messages.length - 1,
-          duration: Duration(milliseconds: 500),
-          curve: Curves.linear);
+      _timer?.cancel();
+      _timer = Timer(Duration(milliseconds: 400), () {
+        _scrollController.scrollToIndex(_bloc.state.messages.length - 1,
+            preferPosition: AutoScrollPosition.begin);
+      });
     }
   }
 
@@ -55,13 +57,8 @@ class _ChatPageState extends State<ChatPage> {
         _bloc.state.messages.indexWhere((item) => item.id == messageId);
 
     if (index != -1) {
-      // print("object key ${key != null} ");
-      // Scrollable.ensureVisible(key.currentContext,
-      //     duration: Duration(milliseconds: 300));
-      _itemScrollController.scrollTo(
-          index: index,
-          duration: Duration(milliseconds: 500),
-          curve: Curves.ease);
+      _scrollController.scrollToIndex(index,
+          preferPosition: AutoScrollPosition.begin);
     }
   }
 
@@ -96,23 +93,28 @@ class _ChatPageState extends State<ChatPage> {
                         children: <Widget>[
                           BlocBuilder<ChatBloc, ChatState>(
                             builder: (_, state) {
-                              return ScrollablePositionedList.builder(
+                              return ListView.builder(
                                 itemCount: state.messages.length,
-                                itemScrollController: _itemScrollController,
+                                controller: _scrollController,
                                 itemBuilder: (_, index) {
                                   final message = state.messages[index];
-                                  return Padding(
-                                    padding: EdgeInsets.only(
-                                        top: index == 0 ? 10 : 0),
-                                    child: MessageItem(
-                                      onReply: () =>
-                                          _bloc.add(ChatReplyToEvent(message)),
-                                      message: message,
-                                      myUserId: _myUserId,
-                                      goToRepy: message.replyTo != null
-                                          ? () => _searchMessageAndScroll(
-                                              message.replyTo.id)
-                                          : null,
+                                  return AutoScrollTag(
+                                    key: ValueKey(index),
+                                    controller: _scrollController,
+                                    index: index,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                          top: index == 0 ? 0 : 0),
+                                      child: MessageItem(
+                                        onReply: () => _bloc
+                                            .add(ChatReplyToEvent(message)),
+                                        message: message,
+                                        myUserId: _myUserId,
+                                        goToRepy: message.replyTo != null
+                                            ? () => _searchMessageAndScroll(
+                                                message.replyTo.id)
+                                            : null,
+                                      ),
                                     ),
                                   );
                                 },

@@ -20,7 +20,7 @@ class ChatAppBar extends StatelessWidget {
             Row(
               children: <Widget>[
                 CupertinoButton(
-                  padding: EdgeInsets.all(12),
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
                   child: SvgPicture.asset(
                     'assets/chat/back.svg',
                     width: 25,
@@ -43,7 +43,7 @@ class ChatAppBar extends StatelessWidget {
             Row(
               children: <Widget>[
                 CupertinoButton(
-                  padding: EdgeInsets.all(12),
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
                   child: SvgPicture.asset(
                     'assets/chat/search.svg',
                     width: 25,
@@ -52,7 +52,7 @@ class ChatAppBar extends StatelessWidget {
                   onPressed: () {},
                 ),
                 CupertinoButton(
-                  padding: EdgeInsets.all(12),
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
                   child: SvgPicture.asset(
                     'assets/chat/menu.svg',
                     width: 25,
