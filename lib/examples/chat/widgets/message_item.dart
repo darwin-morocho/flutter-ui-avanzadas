@@ -55,7 +55,7 @@ class MessageItem extends StatelessWidget {
             from:
                 isMe ? SlideToReplyDirection.right : SlideToReplyDirection.left,
             child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 300),
+              constraints: BoxConstraints(maxWidth: 270),
               child: Column(
                 crossAxisAlignment:
                     isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,

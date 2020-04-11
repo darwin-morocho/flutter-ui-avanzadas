@@ -80,8 +80,8 @@ class _SlideToReplyState extends State<SlideToReply> {
             valueListenable: _show,
             builder: (_, bool value, child) {
               return Positioned(
-                  left: _fromLeft ? 20 : null,
-                  right: _fromLeft ? null : 20,
+                  left: _fromLeft ? 5 : null,
+                  right: _fromLeft ? null : 5,
                   child: AnimatedOpacity(
                       opacity: value ? 1 : 0,
                       child: child,
