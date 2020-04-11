@@ -1,8 +1,5 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:bloc/bloc.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:modernui/examples/chat/api/witai.dart';
 import 'package:modernui/examples/chat/models/link_preview.dart';
 import 'package:modernui/examples/chat/models/message.dart';
@@ -43,12 +40,12 @@ class ChatBloc extends Bloc<ChatEvents, ChatState> {
       await uploadtask.onComplete;
       final String fileUrl = await uploadtask.lastSnapshot.ref.getDownloadURL();
       message = message.copyWith(value: fileUrl);
-      await Future.delayed(Duration(
-          seconds: 3)); // wait for some seconds to simulate the response
-      yield* _sendWitAI(message, completer: event.completer, checkUrl: false);
+      // await Future.delayed(Duration(
+      //     seconds: 3)); // wait for some seconds to simulate the response
+      // yield* _sendWitAI(message, completer: event.completer, checkUrl: false);
       return;
     }
-    await Future.delayed(Duration(seconds: 3));
+    // await Future.delayed(Duration(seconds: 3));
     yield* _sendWitAI(message,
         completer: event.completer, checkUrl: message.type == MessageType.text);
   }

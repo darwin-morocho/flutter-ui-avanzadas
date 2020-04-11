@@ -15,6 +15,7 @@ import 'package:scroll_to_index/scroll_to_index.dart';
 import '../widgets/chat_input.dart';
 
 class ChatPage extends StatefulWidget {
+  static final routeName = 'Chat Bot';
   @override
   _ChatPageState createState() => _ChatPageState();
 }

@@ -7,7 +7,7 @@ import 'package:modernui/utils/responsive.dart';
 import 'package:modernui/widgets/rounded_button.dart';
 
 class LoginPage extends StatefulWidget {
-  static final routeName = "login";
+  static final routeName = "Login";
   @override
   _LoginPageState createState() => _LoginPageState();
 }

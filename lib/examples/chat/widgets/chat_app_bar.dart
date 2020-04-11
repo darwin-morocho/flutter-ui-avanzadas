@@ -26,7 +26,7 @@ class ChatAppBar extends StatelessWidget {
                     width: 25,
                     color: Colors.white,
                   ),
-                  onPressed: () {},
+                  onPressed: () =>Navigator.pop(context),
                 ),
                 SizedBox(width: 10),
                 Text(

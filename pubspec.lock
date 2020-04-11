@@ -141,6 +141,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.5"
+  flare_dart:
+    dependency: transitive
+    description:
+      name: flare_dart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.3.4"
+  flare_flutter:
+    dependency: "direct main"
+    description:
+      name: flare_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.3"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -198,11 +212,9 @@ packages:
   flutter_sound:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: a64d76d5bf6c8e74acaa55750c7d89ca0ac873bd
-      url: "https://github.com/darwin-morocho/flutter_sound.git"
-    source: git
+      name: flutter_sound
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "3.1.6"
   flutter_spinkit:
     dependency: "direct main"

@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:photo_view/photo_view.dart';
 
@@ -49,14 +48,18 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
                     });
                   }
                 },
-                child: Hero(
-                  tag: widget.heroTag,
-                  child: PhotoView(
-                    imageProvider: widget.fromNetwork
-                        ? CachedNetworkImageProvider(widget.imageData)
-                        : FileImage(
-                            File(widget.imageData),
-                          ),
+                child: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  child: Hero(
+                    tag: widget.heroTag,
+                    child: PhotoView(
+                      imageProvider: widget.fromNetwork
+                          ? CachedNetworkImageProvider(widget.imageData)
+                          : FileImage(
+                              File(widget.imageData),
+                            ),
+                    ),
                   ),
                 ),
               ),
@@ -67,7 +70,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
                     child: child,
                     top: visible ? 10 : -80,
                     left: 15,
-                    duration: Duration(milliseconds: 300),
+                    duration: Duration(milliseconds: 100),
                   );
                 },
                 child: CupertinoButton(

@@ -1,4 +1,4 @@
 class MyLocationPages {
-  static final splash = "my-location-splash";
-  static final missingPermission = "my-location-missing-permission";
+  static final splash = "Splash";
+  static final missingPermission = "Location Permission";
 }
