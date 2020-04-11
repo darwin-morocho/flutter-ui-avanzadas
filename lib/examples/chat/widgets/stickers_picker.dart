@@ -33,7 +33,7 @@ class _StickersPickerState extends State<StickersPicker>
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 6 / 5,
+      aspectRatio: 6 / 4,
       child: Container(
         width: double.infinity,
         child: Column(
@@ -45,14 +45,10 @@ class _StickersPickerState extends State<StickersPicker>
                   Stickers.all.length,
                   (index) {
                     final Stickers stickers = Stickers.all[index];
-                    return GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        childAspectRatio: 1,
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 10,
-                      ),
-                      itemBuilder: (_, index) {
+                    return GridView.count(
+                      crossAxisCount: 3,
+                      padding: EdgeInsets.zero,
+                      children: List.generate(stickers.items.length, (index) {
                         final item = stickers.items[index];
                         return CupertinoButton(
                           padding: EdgeInsets.all(10),
@@ -66,8 +62,7 @@ class _StickersPickerState extends State<StickersPicker>
                           ),
                           onPressed: () => widget.onPicked(item),
                         );
-                      },
-                      itemCount: stickers.items.length,
+                      }),
                     );
                   },
                 ),

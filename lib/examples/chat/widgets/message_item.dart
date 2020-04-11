@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:modernui/examples/chat/models/message.dart';
 import 'package:modernui/utils/config.dart';
 import 'link_preview_viewer.dart';
@@ -28,17 +30,31 @@ class MessageItem extends StatelessWidget {
     final isLinkOrImage =
         message.linkPreview != null || message.type == MessageType.image;
 
-    return SlideToReply(
-      onReply: onReply,
-      from: isMe ? SlideToReplyDirection.right : SlideToReplyDirection.left,
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        width: double.infinity,
-        child: Wrap(
-          alignment: isMe ? WrapAlignment.end : WrapAlignment.start,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: <Widget>[
-            ConstrainedBox(
+    final circularBorder = Radius.circular(20);
+    final circularBorderNo = Radius.circular(0);
+
+    return Container(
+      margin: EdgeInsets.only(left: 10, right: 10, bottom: 15),
+      width: double.infinity,
+      child: Wrap(
+        alignment: isMe ? WrapAlignment.end : WrapAlignment.start,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: <Widget>[
+          if (!isMe)
+            Container(
+              width: 30,
+              height: 30,
+              child: SvgPicture.asset(
+                'assets/chat/reddit.svg',
+                color: AppColors.primary,
+              ),
+              margin: EdgeInsets.only(right: 10),
+            ),
+          SlideToReply(
+            onReply: onReply,
+            from:
+                isMe ? SlideToReplyDirection.right : SlideToReplyDirection.left,
+            child: ConstrainedBox(
               constraints: BoxConstraints(maxWidth: 300),
               child: Column(
                 crossAxisAlignment:
@@ -59,9 +75,16 @@ class MessageItem extends StatelessWidget {
                           padding: EdgeInsets.zero,
                           child: AbsorbPointer(
                             absorbing: true,
-                            child: MessageView(
-                              myUserId: myUserId,
-                              message: message.replyTo,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal:
+                                      message.replyTo.type == MessageType.image
+                                          ? 0
+                                          : 10),
+                              child: MessageView(
+                                myUserId: myUserId,
+                                message: message.replyTo,
+                              ),
                             ),
                           ),
                           onPressed: goToRepy,
@@ -78,9 +101,17 @@ class MessageItem extends StatelessWidget {
                   // END REPLY TO MESSAGE
                   Container(
                     decoration: BoxDecoration(
-                        color: isMe ? AppColors.primary : AppColors.gray,
-                        borderRadius:
-                            BorderRadius.circular(isLinkOrImage ? 8 : 30)),
+                      color: isMe ? AppColors.primary : AppColors.gray,
+                      borderRadius: isLinkOrImage
+                          ? BorderRadius.circular(isLinkOrImage ? 8 : 30)
+                          : BorderRadius.only(
+                              topLeft: isMe ? circularBorder : circularBorderNo,
+                              topRight: circularBorder,
+                              bottomLeft: circularBorder,
+                              bottomRight:
+                                  !isMe ? circularBorder : circularBorderNo,
+                            ),
+                    ),
                     padding: EdgeInsets.symmetric(
                       horizontal: isLinkOrImage ? 5 : 15,
                       vertical: isLinkOrImage ? 5 : 10,
@@ -98,13 +129,13 @@ class MessageItem extends StatelessWidget {
                 ],
               ),
             ),
-            if (message.sending)
-              Padding(
-                padding: EdgeInsets.only(left: 5),
-                child: CupertinoActivityIndicator(),
-              )
-          ],
-        ),
+          ),
+          if (message.sending)
+            Padding(
+              padding: EdgeInsets.only(left: 5),
+              child: CupertinoActivityIndicator(),
+            )
+        ],
       ),
     );
   }

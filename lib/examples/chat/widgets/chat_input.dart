@@ -6,6 +6,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:modernui/examples/chat/models/message.dart';
 import 'package:modernui/examples/chat/widgets/draggable_record.dart';
+import 'package:modernui/utils/config.dart';
 import 'package:modernui/utils/extras.dart';
 import 'package:modernui/utils/responsive.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -149,6 +150,17 @@ class ChatInputState extends State<ChatInput> {
     return Column(
       children: <Widget>[
         Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(30),
+              topLeft: Radius.circular(30),
+            ),
+            boxShadow: [
+              BoxShadow(
+                  color: Color(0xffeeeeee), blurRadius: 3, offset: Offset(0, -3))
+            ],
+          ),
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Stack(
             alignment: Alignment.centerLeft,
