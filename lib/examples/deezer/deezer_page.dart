@@ -102,12 +102,13 @@ class _DeezerPageState extends State<DeezerPage> {
                         height: 30,
                       ),
                       DezzerPlayer(
-                        deezerTrack: deezerTrack,
+                        tracks: state.tracks,
                         onPrev: () {
                           _bloc.add(
                               DeezerCurrentTrackEvent(state.trackIndex - 1));
                         },
                         onNext: () {
+                          print("nueva cancion");
                           _bloc.add(
                               DeezerCurrentTrackEvent(state.trackIndex + 1));
                         },

@@ -75,13 +75,14 @@ class _DraggableRecordState extends State<DraggableRecord> {
   }
 
   _startRecording() async {
-    if (_recorder?.isRecording) {
-      await _recorder?.stopRecorder();
+    if (_recorder.isRecording) {
+      await _recorder.stopRecorder();
     }
     Directory tempDir = await getTemporaryDirectory();
     File outputFile =
         File('${tempDir.path}/${DateTime.now().microsecondsSinceEpoch}.aac');
-    _path = await _recorder.startRecorder(uri: outputFile.path);
+    _path = await _recorder.startRecorder(
+        uri: outputFile.path, requestPermission: false);
     _recorderSubs =
         _recorder.onRecorderStateChanged.listen((RecordStatus status) {
       //print(status);

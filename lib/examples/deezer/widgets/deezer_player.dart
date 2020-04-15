@@ -7,19 +7,18 @@ import 'package:modernui/examples/deezer/models/track.dart';
 import 'package:modernui/utils/config.dart';
 import 'package:modernui/utils/extras.dart';
 
-enum DezzerPlayerStatus { playing, paused, stop }
+enum DeezerPlayerStatus { playing, paused, stop, loading }
 
 class DezzerPlayer extends StatefulWidget {
-  final DeezerTrack deezerTrack;
-
+  final List<DeezerTrack> tracks;
   final VoidCallback onNext, onPrev;
 
   const DezzerPlayer(
       {Key key,
-      @required this.deezerTrack,
+      @required this.tracks,
       @required this.onNext,
       @required this.onPrev})
-      : assert(deezerTrack != null),
+      : assert(tracks != null),
         super(key: key);
   @override
   _DezzerPlayerState createState() => _DezzerPlayerState();
@@ -28,11 +27,13 @@ class DezzerPlayer extends StatefulWidget {
 class _DezzerPlayerState extends State<DezzerPlayer> {
   ValueNotifier<int> _position = ValueNotifier(0);
   TrackPlayer _trackPlayer;
-  DezzerPlayerStatus _status = DezzerPlayerStatus.stop;
+  DeezerPlayerStatus _status = DeezerPlayerStatus.loading;
   int _duration = 0;
   StreamSubscription _subs;
   StreamSubscription _buildSubs;
   DeezerTrack _deezerTrack;
+
+  int _index = 0;
 
   bool _sliderDragging = false;
 
@@ -44,7 +45,7 @@ class _DezzerPlayerState extends State<DezzerPlayer> {
 
   void _init() async {
     try {
-      _buildSubs = _builTrack().asStream().listen((_) {});
+      _buildSubs = _builTrack(_index).asStream().listen((_) {});
       _trackPlayer = TrackPlayer();
       await _trackPlayer.initialize();
     } catch (e) {
@@ -60,21 +61,11 @@ class _DezzerPlayerState extends State<DezzerPlayer> {
     super.dispose();
   }
 
-  @override
-  void didUpdateWidget(DezzerPlayer oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    print("got to ${widget.deezerTrack.id}");
-    if (oldWidget.deezerTrack.id != widget.deezerTrack.id) {
-      _buildSubs?.cancel();
-      _buildSubs = _builTrack().asStream().listen((_) {
-        _play();
-      });
+  Future<void> _builTrack(int index) async {
+    _deezerTrack = widget.tracks[index];
+    if (_trackPlayer != null && !_trackPlayer.isStopped) {
+      await _stop();
     }
-  }
-
-  Future<void> _builTrack() async {
-    _deezerTrack = widget.deezerTrack;
-    await _stop();
     await _getDuration();
   }
 
@@ -94,24 +85,37 @@ class _DezzerPlayerState extends State<DezzerPlayer> {
         trackAuthor: _deezerTrack.artist.name,
         albumArtUrl: _deezerTrack.album.cover, // An example image
       );
-
-      await _trackPlayer.startPlayerFromTrack(
+      _status = DeezerPlayerStatus.loading;
+      _position.value = 0;
+      setState(() {});
+      await _trackPlayer
+          .startPlayerFromTrack(
         track,
         whenFinished: () async {
-          await this._stop();
-          setState(() {});
-          widget.onNext();
+          _next();
         },
         onSkipBackward: _prev,
         onSkipForward: _next,
-      );
+        whenPaused: (_) {
+          if (_status == DeezerPlayerStatus.paused) {
+            _resume();
+          } else {
+            _pause();
+          }
+        },
+      )
+          .whenComplete(() {
+        _status = DeezerPlayerStatus.playing;
+        setState(() {});
+      });
+      //_trackPlayer.setSubscriptionDuration(1);
       _subs = _trackPlayer.onPlayerStateChanged.listen((status) {
         final position = status.currentPosition ~/ 1000; // in seconds
-        if (!_sliderDragging) {
+        if (!_sliderDragging && _status != DeezerPlayerStatus.loading) {
           _position.value = position;
         }
       });
-      _status = DezzerPlayerStatus.playing;
+      _status = DeezerPlayerStatus.playing;
       setState(() {});
     } catch (e, s) {
       print(e);
@@ -120,28 +124,51 @@ class _DezzerPlayerState extends State<DezzerPlayer> {
   }
 
   _next() async {
-    await _stop();
-    widget.onNext();
-    setState(() {});
+    await _buildSubs?.cancel();
+    if (_index < widget.tracks.length) {
+      _index++;
+      _buildSubs = _builTrack(_index).asStream().listen((_) {
+        _play();
+        setState(() {});
+      });
+      widget.onNext();
+    } else {
+      await _stop();
+      setState(() {});
+    }
   }
 
   _prev() async {
-    await _stop();
-    widget.onPrev();
-    setState(() {});
+    if (_position.value > 2) {
+      await _trackPlayer?.seekToPlayer(0);
+      _position.value = 0;
+      return;
+    }
+    await _buildSubs?.cancel();
+    if (_index > 0) {
+      _index--;
+      _buildSubs = _builTrack(_index).asStream().listen((_) {
+        _play();
+        setState(() {});
+      });
+      widget.onPrev();
+    } else {
+      await _stop();
+      setState(() {});
+    }
   }
 
   Future<void> _stop() async {
-    _status = DezzerPlayerStatus.stop;
+    _position.value = 0;
+    _status = DeezerPlayerStatus.stop;
     await _subs?.cancel();
     await _trackPlayer?.stopPlayer();
-    _position.value = 0;
   }
 
   Future<void> _pause() async {
     if (_trackPlayer.isPlaying) {
       await _trackPlayer.pausePlayer();
-      _status = DezzerPlayerStatus.paused;
+      _status = DeezerPlayerStatus.paused;
       setState(() {});
     }
   }
@@ -149,19 +176,30 @@ class _DezzerPlayerState extends State<DezzerPlayer> {
   Future<void> _resume() async {
     if (_trackPlayer.isPaused) {
       await _trackPlayer.resumePlayer();
-      _status = DezzerPlayerStatus.playing;
+      _status = DeezerPlayerStatus.playing;
       setState(() {});
     }
   }
 
   Future<void> _onPlayPause() async {
-    if (_status == DezzerPlayerStatus.playing) {
+    if (_status == DeezerPlayerStatus.playing) {
       await _pause();
-    } else if (_status == DezzerPlayerStatus.paused) {
+    } else if (_status == DeezerPlayerStatus.paused) {
       await _resume();
     } else {
       await _play();
     }
+  }
+
+  Widget _getPlayPauseButton() {
+    if (_status == DeezerPlayerStatus.loading) {
+      return CupertinoActivityIndicator();
+    }
+    return Icon(
+      _status == DeezerPlayerStatus.playing ? Icons.pause : Icons.play_arrow,
+      size: 40,
+      color: AppColors.primary,
+    );
   }
 
   @override
@@ -204,15 +242,10 @@ class _DezzerPlayerState extends State<DezzerPlayer> {
                       )
                     ],
                   ),
-                  child: Icon(
-                    _status == DezzerPlayerStatus.playing
-                        ? Icons.pause
-                        : Icons.play_arrow,
-                    size: 40,
-                    color: AppColors.primary,
-                  ),
+                  child: _getPlayPauseButton(),
                 ),
-                onPressed: _onPlayPause,
+                onPressed:
+                    _status == DeezerPlayerStatus.loading ? null : _onPlayPause,
               ),
               CupertinoButton(
                 padding: EdgeInsets.zero,
@@ -243,25 +276,30 @@ class _DezzerPlayerState extends State<DezzerPlayer> {
                     final double value =
                         _duration > 0 ? ((position / _duration) * 100) : 0;
 
-                    return Slider(
-                      value: value > 100 ? 100 : value,
-                      label: "${Extras.getTime(position)}",
-                      divisions: 100,
-                      min: 0,
-                      max: 100,
-                      activeColor: AppColors.primary,
-                      inactiveColor: Color(0xffdddddd),
-                      onChangeEnd: (_) async {
-                        final seekTo = _duration * _ ~/ 100; // in seconds
-                        await _trackPlayer.seekToPlayer(seekTo * 1000);
-                        _sliderDragging = false;
-                      },
-                      onChangeStart: (_) {
-                        _sliderDragging = true;
-                      },
-                      onChanged: (_) {
-                        _position.value = _duration * _ ~/ 100;
-                      },
+                    return AbsorbPointer(
+                      absorbing: _status == DeezerPlayerStatus.loading,
+                      child: Slider(
+                        value: value > 100 ? 100 : value,
+                        label: "${Extras.getTime(position)}",
+                        divisions: 100,
+                        min: 0,
+                        max: 100,
+                        activeColor: AppColors.primary,
+                        inactiveColor: Color(0xffdddddd),
+                        onChangeEnd: (_) async {
+                          final seekTo = _duration * _ ~/ 100; // in seconds
+                          if (_trackPlayer.isPlaying || _trackPlayer.isPaused) {
+                            await _trackPlayer?.seekToPlayer(seekTo * 1000);
+                            _sliderDragging = false;
+                          }
+                        },
+                        onChangeStart: (_) {
+                          _sliderDragging = true;
+                        },
+                        onChanged: (_) {
+                          _position.value = _duration * _ ~/ 100;
+                        },
+                      ),
                     );
                   },
                 ),
