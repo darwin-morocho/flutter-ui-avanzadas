@@ -37,12 +37,33 @@ class ChatBloc extends Bloc<ChatEvents, ChatState> {
     if (message.type != MessageType.text && message.file != null) {
       // if we are sending a image or audio
       final uploadtask = Extras.uploadFile(message.file);
+      uploadtask.events.listen((event) {
+        print(event.type);
+      });
       await uploadtask.onComplete;
-      final String fileUrl = await uploadtask.lastSnapshot.ref.getDownloadURL();
-      message = message.copyWith(value: fileUrl);
-      // await Future.delayed(Duration(
-      //     seconds: 3)); // wait for some seconds to simulate the response
-      // yield* _sendWitAI(message, completer: event.completer, checkUrl: false);
+      print("ready");
+      if (uploadtask.isSuccessful) {
+        final String fileUrl =
+            await uploadtask.lastSnapshot.ref.getDownloadURL();
+        message = message.copyWith(value: fileUrl);
+        // await Future.delayed(Duration(
+        //     seconds: 3)); // wait for some seconds to simulate the response
+        yield* _sendWitAI(message, completer: event.completer, checkUrl: false);
+      } else {
+        message = message.copyWith(
+            value: "No se pudo enviar el archivo",
+            sending: false,
+            type: MessageType.text);
+        final messages = [...this.state.messages];
+        // chage message status to sending false
+        final index = messages.indexWhere((item) => item.id == message.id);
+        if (index != -1) {
+          messages[index] = message;
+        }
+        yield this.state.copyWith(messages: messages); // updat
+        event.completer.complete();
+      }
+
       return;
     }
     // await Future.delayed(Duration(seconds: 3));

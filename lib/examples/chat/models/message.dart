@@ -27,15 +27,16 @@ class Message {
       Message replyTo,
       LinkPreview linkPreview,
       bool sending,
+      String type,
       File file}) {
     return Message(
         id: this.id,
         userId: this.userId,
         value: value ?? this.value,
-        type: this.type,
         sending: sending ?? this.sending,
         replyTo: replyTo ?? this.replyTo,
         file: file ?? this.file,
+        type: type ?? this.type,
         linkPreview: linkPreview ?? this.linkPreview);
   }
 }

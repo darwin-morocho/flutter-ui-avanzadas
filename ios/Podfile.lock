@@ -46,9 +46,9 @@ PODS:
     - FirebaseCore (~> 6.6)
     - GTMSessionFetcher/Core (~> 1.1)
   - Flutter (1.0.0)
-  - flutter_ffmpeg/audio-lts (0.2.10):
+  - flutter_ffmpeg/https-lts (0.2.10):
     - Flutter
-    - mobile-ffmpeg-audio (= 4.3.1.LTS)
+    - mobile-ffmpeg-https (= 4.3.1.LTS)
   - flutter_image_compress (0.0.1):
     - Flutter
     - Mantle
@@ -107,7 +107,7 @@ PODS:
   - Mantle (2.1.1):
     - Mantle/extobjc (= 2.1.1)
   - Mantle/extobjc (2.1.1)
-  - mobile-ffmpeg-audio (4.3.1.LTS)
+  - mobile-ffmpeg-https (4.3.1.LTS)
   - nanopb (0.3.9011):
     - nanopb/decode (= 0.3.9011)
     - nanopb/encode (= 0.3.9011)
@@ -133,7 +133,7 @@ DEPENDENCIES:
   - firebase_core_web (from `.symlinks/plugins/firebase_core_web/ios`)
   - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - Flutter (from `Flutter`)
-  - flutter_ffmpeg/audio-lts (from `.symlinks/plugins/flutter_ffmpeg/ios`)
+  - flutter_ffmpeg/https-lts (from `.symlinks/plugins/flutter_ffmpeg/ios`)
   - flutter_image_compress (from `.symlinks/plugins/flutter_image_compress/ios`)
   - flutter_keyboard_visibility (from `.symlinks/plugins/flutter_keyboard_visibility/ios`)
   - flutter_plugin_android_lifecycle (from `.symlinks/plugins/flutter_plugin_android_lifecycle/ios`)
@@ -163,7 +163,7 @@ SPEC REPOS:
     - GTMSessionFetcher
     - libwebp
     - Mantle
-    - mobile-ffmpeg-audio
+    - mobile-ffmpeg-https
     - nanopb
     - PromisesObjC
     - SDWebImage
@@ -229,7 +229,7 @@ SPEC CHECKSUMS:
   image_picker: e3eacd46b94694dde7cf2705955cece853aa1a8f
   libwebp: 946cb3063cea9236285f7e9a8505d806d30e07f3
   Mantle: 35238ae6f2e2b2d474fa7b67fee82a59fea71915
-  mobile-ffmpeg-audio: adc36047b8032bc0f8e5c4e6ab7cb110189d9b37
+  mobile-ffmpeg-https: aebe327c4cdacde636defa4118465413f099667d
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
   path_provider: fb74bd0465e96b594bb3b5088ee4a4e7bb1f2a9d
   path_provider_macos: f760a3c5b04357c380e2fddb6f9db6f3015897e0
@@ -239,6 +239,6 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: e7ae855f058e3dcae99696920b6a5d134e9dcddf
   sqflite: 4001a31ff81d210346b500c55b17f4d6c7589dd0
 
-PODFILE CHECKSUM: 2ae223272ecd01ce76d3ed3c78d4bafbde7e4392
+PODFILE CHECKSUM: 94ef3dbf0cb3ebfcfbac6b05d9aa017f3d38878b
 
 COCOAPODS: 1.7.3

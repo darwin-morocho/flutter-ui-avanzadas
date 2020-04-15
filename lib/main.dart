@@ -4,10 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:modernui/examples/chat/pages/chat_page.dart';
+import 'package:modernui/examples/deezer/deezer_page.dart';
 import 'package:modernui/examples/login/login_page.dart';
 import 'package:modernui/examples/my_location/pages/my_location_missing_permission_page.dart';
 import 'package:modernui/examples/my_location/pages/my_location_pages.dart';
-import 'package:modernui/examples/my_location/pages/my_location_splash_page.dart';
 import 'package:modernui/utils/config.dart';
 import 'package:modernui/widgets/rounded_button.dart';
 
@@ -21,7 +21,8 @@ class MyApp extends StatelessWidget {
       LoginPage.routeName: (_) => LoginPage(),
       MyLocationPages.missingPermission: (_) =>
           MyLocationMissingPermissionPage(),
-      ChatPage.routeName: (_) => ChatPage()
+      ChatPage.routeName: (_) => ChatPage(),
+      DeezerPage.routeName: (_) => DeezerPage()
     };
     return MaterialApp(
       theme: ThemeData(fontFamily: 'sans', platform: TargetPlatform.iOS),

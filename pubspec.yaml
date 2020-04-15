@@ -43,7 +43,7 @@ dependencies:
   flutter_keyboard_visibility: ^0.8.0
   flutter_inner_drawer: ^0.5.5
   flare_flutter: ^2.0.3
-  flutter_sound: 3.1.6
+  flutter_sound: ^3.1.8
       
 dev_dependencies:
   flutter_test:
@@ -88,6 +88,14 @@ flutter:
    - assets/chat/back.svg
    #RIVE
    - assets/rive/flip.flr
+   #dezzer
+   - assets/deezer/play.svg
+   - assets/deezer/pause.svg
+   - assets/deezer/share.svg
+   - assets/deezer/star.svg
+   - assets/deezer/heart.svg
+   - assets/deezer/fast-forward.svg
+   - assets/deezer/rewind.svg
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

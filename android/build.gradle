@@ -19,7 +19,7 @@ allprojects {
 
 
 
-ext.flutterFFmpegPackage = 'audio-lts'
+ext.flutterFFmpegPackage = 'https-lts'
 
 rootProject.buildDir = '../build'
 subprojects {

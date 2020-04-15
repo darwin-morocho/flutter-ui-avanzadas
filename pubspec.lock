@@ -215,7 +215,7 @@ packages:
       name: flutter_sound
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.6"
+    version: "3.1.8"
   flutter_spinkit:
     dependency: "direct main"
     description:
