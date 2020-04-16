@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flauto.dart';
@@ -7,7 +8,7 @@ import 'package:modernui/examples/deezer/models/track.dart';
 import 'package:modernui/utils/config.dart';
 import 'package:modernui/utils/extras.dart';
 
-enum DeezerPlayerStatus { playing, paused, stop, loading }
+enum DeezerPlayerStatus { playing, paused, stopped, loading, loaded }
 
 class DezzerPlayer extends StatefulWidget {
   final List<DeezerTrack> tracks;
@@ -26,16 +27,40 @@ class DezzerPlayer extends StatefulWidget {
 
 class _DezzerPlayerState extends State<DezzerPlayer> {
   ValueNotifier<int> _position = ValueNotifier(0);
-  TrackPlayer _trackPlayer;
+  AudioPlayer _audioPlayer = AudioPlayer();
   DeezerPlayerStatus _status = DeezerPlayerStatus.loading;
   int _duration = 0;
-  StreamSubscription _subs;
-  StreamSubscription _buildSubs;
   DeezerTrack _deezerTrack;
-
+  Timer _timer;
+  StreamSubscription _subs;
   int _index = 0;
-
   bool _sliderDragging = false;
+  bool _autoplay;
+
+  bool get _isPlayingOrPaused {
+    return _status == DeezerPlayerStatus.playing ||
+        _status == DeezerPlayerStatus.paused;
+  }
+
+  bool get _isPlaying {
+    return _status == DeezerPlayerStatus.playing;
+  }
+
+  bool get _isPaused {
+    return _status == DeezerPlayerStatus.paused;
+  }
+
+  bool get _isStopped {
+    return _status == DeezerPlayerStatus.stopped;
+  }
+
+  bool get _isLoading {
+    return _status == DeezerPlayerStatus.loading;
+  }
+
+  bool get _isLoaded {
+    return _status == DeezerPlayerStatus.loaded;
+  }
 
   @override
   void initState() {
@@ -45,9 +70,8 @@ class _DezzerPlayerState extends State<DezzerPlayer> {
 
   void _init() async {
     try {
-      _buildSubs = _builTrack(_index).asStream().listen((_) {});
-      _trackPlayer = TrackPlayer();
-      await _trackPlayer.initialize();
+      AudioPlayer.logEnabled = false;
+      _set(_index);
     } catch (e) {
       print(e);
     }
@@ -55,136 +79,155 @@ class _DezzerPlayerState extends State<DezzerPlayer> {
 
   @override
   void dispose() {
-    _trackPlayer?.release();
     _subs?.cancel();
-    _buildSubs?.cancel();
+    _audioPlayer.release();
+    _timer?.cancel();
     super.dispose();
   }
 
-  Future<void> _builTrack(int index) async {
-    _deezerTrack = widget.tracks[index];
-    if (_trackPlayer != null && !_trackPlayer.isStopped) {
-      await _stop();
+  Future<void> _set(int index) async {
+    if (_isPlaying) {
+      await _audioPlayer.stop();
     }
-    await _getDuration();
-  }
-
-  _getDuration() async {
-    final duration = await FlutterSoundHelper().duration(_deezerTrack.preview);
-    //FlutterSoundHelper().FFmpegGetMediaInformation(uri).
-    _duration = duration ~/ 1000;
+    await _subs?.cancel();
+    _timer?.cancel();
+    _deezerTrack = widget.tracks[_index];
+    _status = DeezerPlayerStatus.loading;
     setState(() {});
+    _position.value = 0;
+
+    _subs = _audioPlayer
+        .setUrl(_deezerTrack.preview)
+        .asStream()
+        .listen((result) async {
+      if (result == 1) {
+        _status = DeezerPlayerStatus.loaded;
+        await _audioPlayer.setReleaseMode(
+            ReleaseMode.STOP); // set release mode so that it never releases
+        final duration = await _audioPlayer.getDuration();
+        _duration = duration ~/ 1000;
+        setState(() {});
+        if (_autoplay != null && _autoplay) {
+          _play();
+        }
+        _autoplay = null;
+      }
+    });
   }
 
   Future<void> _play() async {
     try {
-      // Create with the path to the audio file
-      Track track = new Track(
-        trackPath: _deezerTrack.preview, // An example audio file
-        trackTitle: _deezerTrack.title,
-        trackAuthor: _deezerTrack.artist.name,
-        albumArtUrl: _deezerTrack.album.cover, // An example image
-      );
-      _status = DeezerPlayerStatus.loading;
-      _position.value = 0;
-      setState(() {});
-      await _trackPlayer
-          .startPlayerFromTrack(
-        track,
-        whenFinished: () async {
-          _next();
-        },
-        onSkipBackward: _prev,
-        onSkipForward: _next,
-        whenPaused: (_) {
-          if (_status == DeezerPlayerStatus.paused) {
-            _resume();
-          } else {
-            _pause();
-          }
-        },
-      )
-          .whenComplete(() {
+      print("play");
+      int result = await _audioPlayer.resume();
+      if (result == 1) {
+        _audioPlayer.startHeadlessService();
         _status = DeezerPlayerStatus.playing;
+        await _audioPlayer.setNotification(
+            title: _deezerTrack.title,
+            albumTitle: _deezerTrack.album.title,
+            artist: _deezerTrack.artist.name,
+            imageUrl: _deezerTrack.album.cover);
         setState(() {});
-      });
-      //_trackPlayer.setSubscriptionDuration(1);
-      _subs = _trackPlayer.onPlayerStateChanged.listen((status) {
-        final position = status.currentPosition ~/ 1000; // in seconds
-        if (!_sliderDragging && _status != DeezerPlayerStatus.loading) {
-          _position.value = position;
-        }
-      });
-      _status = DeezerPlayerStatus.playing;
-      setState(() {});
+        //   _audioPlayer.monitorNotificationStateChanges(this._onAudioPlayerState);
+        _timer = Timer.periodic(Duration(seconds: 1), (_) async {
+          final position =
+              await _audioPlayer.getCurrentPosition(); // in milliseconds
+          if (!_sliderDragging && _isPlaying) {
+            _position.value = position ~/ 1000;
+          }
+        });
+      }
     } catch (e, s) {
       print(e);
       print(s);
     }
   }
 
+  _onAudioPlayerState(AudioPlayerState state) {
+    print(state);
+    switch (state) {
+      case AudioPlayerState.COMPLETED:
+        _next();
+        break;
+
+      case AudioPlayerState.PAUSED:
+        break;
+
+      case AudioPlayerState.PLAYING:
+        break;
+
+      case AudioPlayerState.STOPPED:
+        break;
+    }
+  }
+
   _next() async {
-    await _buildSubs?.cancel();
-    if (_index < widget.tracks.length) {
+    if (_index < widget.tracks.length - 1) {
       _index++;
-      _buildSubs = _builTrack(_index).asStream().listen((_) {
-        _play();
-        setState(() {});
-      });
       widget.onNext();
+      if (_autoplay == null) {
+        _autoplay = _isPlaying;
+      }
+      _set(_index);
     } else {
       await _stop();
-      setState(() {});
     }
   }
 
   _prev() async {
     if (_position.value > 2) {
-      await _trackPlayer?.seekToPlayer(0);
       _position.value = 0;
+      await _audioPlayer.seek(Duration(seconds: 0));
       return;
     }
-    await _buildSubs?.cancel();
+
     if (_index > 0) {
       _index--;
-      _buildSubs = _builTrack(_index).asStream().listen((_) {
-        _play();
-        setState(() {});
-      });
       widget.onPrev();
+      if (_autoplay == null) {
+        _autoplay = _isPlaying;
+      }
+      _set(_index);
     } else {
       await _stop();
-      setState(() {});
     }
   }
 
   Future<void> _stop() async {
-    _position.value = 0;
-    _status = DeezerPlayerStatus.stop;
-    await _subs?.cancel();
-    await _trackPlayer?.stopPlayer();
+    if (_isPlayingOrPaused) {
+      _position.value = 0;
+      _status = DeezerPlayerStatus.stopped;
+      final result = await _audioPlayer.stop();
+      if (result == 1) {
+        setState(() {});
+      }
+    }
   }
 
   Future<void> _pause() async {
-    if (_trackPlayer.isPlaying) {
-      await _trackPlayer.pausePlayer();
-      _status = DeezerPlayerStatus.paused;
-      setState(() {});
+    if (_isPlaying) {
+      int result = await _audioPlayer.pause();
+      if (result == 1) {
+        _status = DeezerPlayerStatus.paused;
+        setState(() {});
+      }
     }
   }
 
   Future<void> _resume() async {
-    if (_trackPlayer.isPaused) {
-      await _trackPlayer.resumePlayer();
-      _status = DeezerPlayerStatus.playing;
-      setState(() {});
+    if (_isPaused) {
+      int result = await _audioPlayer.resume();
+      if (result == 1) {
+        _status = DeezerPlayerStatus.playing;
+        setState(() {});
+      }
     }
   }
 
   Future<void> _onPlayPause() async {
-    if (_status == DeezerPlayerStatus.playing) {
+    if (_isPlaying) {
       await _pause();
-    } else if (_status == DeezerPlayerStatus.paused) {
+    } else if (_isPaused) {
       await _resume();
     } else {
       await _play();
@@ -192,11 +235,11 @@ class _DezzerPlayerState extends State<DezzerPlayer> {
   }
 
   Widget _getPlayPauseButton() {
-    if (_status == DeezerPlayerStatus.loading) {
+    if (_isLoading) {
       return CupertinoActivityIndicator();
     }
     return Icon(
-      _status == DeezerPlayerStatus.playing ? Icons.pause : Icons.play_arrow,
+      _isPlaying ? Icons.pause : Icons.play_arrow,
       size: 40,
       color: AppColors.primary,
     );
@@ -244,8 +287,7 @@ class _DezzerPlayerState extends State<DezzerPlayer> {
                   ),
                   child: _getPlayPauseButton(),
                 ),
-                onPressed:
-                    _status == DeezerPlayerStatus.loading ? null : _onPlayPause,
+                onPressed: _isLoading ? null : _onPlayPause,
               ),
               CupertinoButton(
                 padding: EdgeInsets.zero,
@@ -288,8 +330,9 @@ class _DezzerPlayerState extends State<DezzerPlayer> {
                         inactiveColor: Color(0xffdddddd),
                         onChangeEnd: (_) async {
                           final seekTo = _duration * _ ~/ 100; // in seconds
-                          if (_trackPlayer.isPlaying || _trackPlayer.isPaused) {
-                            await _trackPlayer?.seekToPlayer(seekTo * 1000);
+                          if (_isPlayingOrPaused) {
+                            int result = await _audioPlayer
+                                .seek(Duration(seconds: seekTo));
                             _sliderDragging = false;
                           }
                         },
