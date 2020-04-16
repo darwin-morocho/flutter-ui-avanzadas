@@ -44,6 +44,7 @@ dependencies:
   flutter_inner_drawer: ^0.5.5
   flare_flutter: ^2.0.3
   flutter_sound: ^3.1.8
+  audioplayers: ^0.15.1
       
 dev_dependencies:
   flutter_test:
