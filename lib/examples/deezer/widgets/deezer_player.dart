@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class _DezzerPlayerState extends State<DezzerPlayer> {
   int _duration = 0;
   DeezerTrack _deezerTrack;
   Timer _timer;
-  StreamSubscription _subs;
+  StreamSubscription _subs, _playerStateChangedSubs;
   int _index = 0;
   bool _sliderDragging = false;
   bool _autoplay;
@@ -71,6 +72,9 @@ class _DezzerPlayerState extends State<DezzerPlayer> {
   void _init() async {
     try {
       AudioPlayer.logEnabled = false;
+      if (Platform.isIOS) {
+        _audioPlayer.startHeadlessService();
+      }
       _set(_index);
     } catch (e) {
       print(e);
@@ -80,6 +84,7 @@ class _DezzerPlayerState extends State<DezzerPlayer> {
   @override
   void dispose() {
     _subs?.cancel();
+    _playerStateChangedSubs?.cancel();
     _audioPlayer.release();
     _timer?.cancel();
     super.dispose();
@@ -117,23 +122,36 @@ class _DezzerPlayerState extends State<DezzerPlayer> {
 
   Future<void> _play() async {
     try {
+      _playerStateChangedSubs?.cancel();
       print("play");
       int result = await _audioPlayer.resume();
       if (result == 1) {
-        _audioPlayer.startHeadlessService();
+        _audioPlayer.onNotificationPlayerStateChanged
+            .listen(_onAudioPlayerState);
+
+        _playerStateChangedSubs =
+            _audioPlayer.onPlayerStateChanged.listen(_onAudioPlayerState);
+
         _status = DeezerPlayerStatus.playing;
-        await _audioPlayer.setNotification(
-            title: _deezerTrack.title,
-            albumTitle: _deezerTrack.album.title,
-            artist: _deezerTrack.artist.name,
-            imageUrl: _deezerTrack.album.cover);
+
+        if (Platform.isIOS) {
+          await _audioPlayer.setNotification(
+              title: _deezerTrack.title,
+              albumTitle: _deezerTrack.album.title,
+              artist: _deezerTrack.artist.name,
+              forwardSkipInterval: Duration(seconds: _duration),
+              backwardSkipInterval: Duration(seconds: 0),
+              imageUrl: _deezerTrack.album.cover);
+        }
+
         setState(() {});
-        //   _audioPlayer.monitorNotificationStateChanges(this._onAudioPlayerState);
-        _timer = Timer.periodic(Duration(seconds: 1), (_) async {
-          final position =
-              await _audioPlayer.getCurrentPosition(); // in milliseconds
+        _audioPlayer.onAudioPositionChanged.listen((position) {
+          if (_duration > position.inSeconds && position.inSeconds == 0) {
+            _prev();
+            return;
+          }
           if (!_sliderDragging && _isPlaying) {
-            _position.value = position ~/ 1000;
+            _position.value = position.inSeconds;
           }
         });
       }
